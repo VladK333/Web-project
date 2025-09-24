@@ -143,49 +143,16 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
-    <Compile Include="Controllers\AviokompanijeController.cs" />
-    <Compile Include="Controllers\IdentityController.cs" />
-    <Compile Include="Controllers\KorisniciController.cs" />
-    <Compile Include="Controllers\LetoviController.cs" />
-    <Compile Include="Controllers\RecenzijeController.cs" />
-    <Compile Include="Controllers\RezervacijeController.cs" />
-    <Compile Include="DTO\AviokompanijaDTO.cs" />
-    <Compile Include="DTO\LetDTO.cs" />
-    <Compile Include="DTO\PrijavaDTO.cs" />
-    <Compile Include="DTO\NovaRecenzijaDTO.cs" />
-    <Compile Include="DTO\RecenzijaDTO.cs" />
-    <Compile Include="DTO\RegistracijaDTO.cs" />
-    <Compile Include="DTO\RezervacijaDTO.cs" />
-    <Compile Include="DTO\RezervisanjeLetaDTO.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Models\Aranzman.cs" />
-    <Compile Include="Models\Komentar.cs" />
-    <Compile Include="Models\RezervacijaAranzmana.cs" />
-    <Compile Include="Models\starobrisinakraju\Aviokompanija.cs" />
-    <Compile Include="Models\Korisnik.cs" />
-    <Compile Include="Models\starobrisinakraju\Let.cs" />
-    <Compile Include="Models\starobrisinakraju\Recenzija.cs" />
-    <Compile Include="Models\starobrisinakraju\Rezervacija.cs" />
-    <Compile Include="Models\Smestaj.cs" />
-    <Compile Include="Models\SmestajnaJedinica.cs" />
-    <Compile Include="Podaci\BazaPodataka.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Static\Aviokompanija.html" />
-    <Content Include="Static\Aviokompanije.html" />
-    <Content Include="Static\AranzmaniMenadzerTabela.html" />
     <Content Include="Static\images\login.jpg" />
     <Content Include="Content\tailwind.css" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
-    <Content Include="Podaci\json\korisnici.json" />
-    <Content Include="Podaci\json\kompanije.json" />
-    <Content Include="Podaci\json\letovi.json" />
-    <Content Include="Podaci\json\rezervacije.json" />
-    <Content Include="Podaci\json\recenzije.json" />
     <None Include="Scripts\jquery-3.7.1.intellisense.js" />
     <Content Include="Scripts\jquery-3.7.1.js" />
     <Content Include="Scripts\jquery-3.7.1.min.js" />
@@ -193,19 +160,6 @@
     <Content Include="Scripts\jquery-3.7.1.slim.min.js" />
     <Content Include="Scripts\modernizr-2.8.3.js" />
     <Content Include="Static\images\profile.jpg" />
-    <Content Include="Static\index.html" />
-    <Content Include="Static\KorisniciTabela.html" />
-    <Content Include="Static\LetoviKorisnik.html" />
-    <Content Include="Static\LetoviTabela.html" />
-    <Content Include="Static\Menadzment.html" />
-    <Content Include="Static\NavigacioniMeni.html" />
-    <Content Include="Static\Odjava.html" />
-    <Content Include="Static\Prijava.html" />
-    <Content Include="Static\Profil.html" />
-    <Content Include="Static\RecenzijeTabela.html" />
-    <Content Include="Static\Registracija.html" />
-    <Content Include="Static\RezervacijeKorisnik.html" />
-    <Content Include="Static\RezervacijeTabela.html" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -216,7 +170,10 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Podaci\recenzije\" />
+    <Folder Include="Controllers\" />
+    <Folder Include="DTO\" />
+    <Folder Include="Models\" />
+    <Folder Include="Podaci\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
