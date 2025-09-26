@@ -61,11 +61,13 @@ namespace projekat.Models
         [Required]
         public long SmestajId { get; set; }
 
+        public long KorisnikId { get; set; }
+
         public bool IsDeleted { get; set; } = false;
 
         public Aranzman() { }
 
-        public Aranzman(long id, string naziv, TipAranzmana tipAranzmana, TipPrevoza tipPrevoza, string lokacija, DateTime datumPocetka, DateTime datumZavrsetka, int maksimalanBrojPutnika, string opis, string programPutovanja, string posterAranzmana, long smestajId, bool isDeleted)
+        public Aranzman(long id, string naziv, TipAranzmana tipAranzmana, TipPrevoza tipPrevoza, string lokacija, DateTime datumPocetka, DateTime datumZavrsetka, int maksimalanBrojPutnika, string opis, string programPutovanja, string posterAranzmana, long smestajId, long korisnikId, bool isDeleted)
         {
             Id = id;
             Naziv = naziv;
@@ -79,6 +81,7 @@ namespace projekat.Models
             ProgramPutovanja = programPutovanja;
             PosterAranzmana = posterAranzmana;
             SmestajId = smestajId;
+            KorisnikId = korisnikId;
             IsDeleted = isDeleted;
         }
     }
