@@ -30,12 +30,14 @@ namespace projekat.Models
 
         public bool ImaWifi { get; set; }
 
+        public bool IsDeleted { get; set; }
+
         [Required]
         public List<long> SmestajneJedinice { get; set; } = new List<long>();
 
         public Smestaj() { }
 
-        public Smestaj(long id, TipSmestaja tip, string naziv, int brojZvezdica, bool imaBazen, bool imaSpaCentar, bool prilagodjenoZaInvaliditet, bool imaWifi, List<long> smestajneJedinice)
+        public Smestaj(long id, TipSmestaja tip, string naziv, int brojZvezdica, bool imaBazen, bool imaSpaCentar, bool prilagodjenoZaInvaliditet, bool imaWifi, bool isDeleted, List<long> smestajneJedinice)
         {
             Id = id;
             Tip = tip;
@@ -45,6 +47,7 @@ namespace projekat.Models
             ImaSpaCentar = imaSpaCentar;
             PrilagodjenoZaInvaliditet = prilagodjenoZaInvaliditet;
             ImaWifi = imaWifi;
+            IsDeleted = isDeleted;
             SmestajneJedinice = smestajneJedinice;
         }
     }

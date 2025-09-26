@@ -1,5 +1,4 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace projekat.Models
 {
@@ -15,14 +14,17 @@ namespace projekat.Models
         [Required]
         public decimal Cena { get; set; }
 
+        public bool IsDeleted { get; set; }
+
         public SmestajnaJedinica() { }
 
-        public SmestajnaJedinica(long id, int dozvoljenBrojGostiju, bool dozvoljenBoravakKucnimLjubimcima, decimal cena)
+        public SmestajnaJedinica(long id, int dozvoljenBrojGostiju, bool dozvoljenBoravakKucnimLjubimcima, decimal cena, bool isDeleted)
         {
             Id = id;
             DozvoljenBrojGostiju = dozvoljenBrojGostiju;
             DozvoljenBoravakKucnimLjubimcima = dozvoljenBoravakKucnimLjubimcima;
             Cena = cena;
+            IsDeleted = isDeleted;
         }
     }
 }
