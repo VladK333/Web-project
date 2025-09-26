@@ -75,8 +75,31 @@
                 const id = $(this).data("id");
                 window.location.href = `/Static/DetaljiAranzmana.html?id=${id}`;
             });
-        }
 
+            $(".dugme-rezervisi").on("click", function () {
+                const id = $(this).data("id");
+                rezervisiAranzman(id);
+            });
+
+            function rezervisiAranzman(aranzmanId) {
+                // backend logika: pronalazi slobodnu smestajnu jedinicu i rezervise
+                $.ajax({
+                    url: `http://localhost:51858/api/rezervacije/rezerwisi/${aranzmanId}`,
+                    method: "POST",
+                    success: function () {
+                        alert("Rezervacija je uspešno izvršena!");
+                    },
+                    error: function (xhr) {
+                        alert("Greška pri rezervaciji: " + (xhr.responseJSON?.message || xhr.statusText));
+                    }
+                });
+        }
+            function formatirajDatum(datum) {
+                const dan = String(datum.getDate()).padStart(2, '0');
+                const mesec = String(datum.getMonth() + 1).padStart(2, '0');
+                const godina = datum.getFullYear();
+                return `${godina}-${mesec}-${dan}`;
+            }
     </script>
 </head>
 
