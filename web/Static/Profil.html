@@ -7,7 +7,66 @@
     <link href="../Content/tailwind.css" rel="stylesheet">
     <script src="../Scripts/jquery-3.7.1.min.js"></script>
     <title>Profil</title>
-    
+    <script>
+        $(document).ready(function () {
+            $('#navigation-menu').load('NavigacioniMeni.html', function (response, status, xhr) {
+                if (status === 'error') {
+                    console.error('Error loading the navigation menu:', xhr.status, xhr.statusText);
+                }
+            });
+
+            // Proveri da li je vec prijavljen korisnik
+            $.ajax({
+                url: 'http://localhost:51858/api/identity/sesija',
+                type: 'GET',
+                error: function () {
+                    window.location.href = "Prijava.html";
+                },
+                success: function (response) {
+                    if (response && response.data) {
+                        var korisnik = response.data;
+                        var parts = korisnik.DatumRodjenja.split('/');
+                        var formattedDate = `${parts[2]}-${parts[1]}-${parts[0]}`;
+
+                        $('#username').val(korisnik.KorisnickoIme);
+                        $('#ime').val(korisnik.Ime);
+                        $('#prezime').val(korisnik.Prezime);
+                        $('#email').val(korisnik.Email);
+                        $('#password').val(korisnik.Lozinka);
+                        $('#datumRodjenja').val(formattedDate);
+                        $('#pol').val(korisnik.Pol);
+                    }
+                }
+            });
+
+            $('#profileForm').submit(function (event) {
+                event.preventDefault();
+
+                var korisnickoIme = $('#username').val();
+                var lozinka = $('#password').val();
+                var ime = $('#ime').val();
+                var prezime = $('#prezime').val();
+                var email = $('#email').val();
+                var datumRodjenja = $('#datumRodjenja').val();
+                var pol = $('#pol').val();
+
+                $.ajax({
+                    url: 'http://localhost:51858/api/korisnici/update',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({ KorisnickoIme: korisnickoIme, Lozinka: lozinka, Ime: ime, Prezime: prezime, Email: email, DatumRodjenja: datumRodjenja, Pol: pol }),
+                    success: function (response) {
+                        // Handle success
+                        $('#success').text("Profil je uspešno ažuriran!");
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        // Handle errors here
+                        $('#greska').text("Proverite unete podatke!");
+                    }
+                });
+            });
+        });
+    </script>
 </head>
 
 <body>
