@@ -59,5 +59,15 @@ namespace projekat.Podaci
             Rezervacije = Deserialize<RezervacijaAranzmana>("rezervacije.json");
             Komentari = Deserialize<Komentar>("komentari.json");
         }
+
+        public static void SacuvajPodatke()
+        {
+            Serialize("jedinice.json", SmestajneJedinice);
+            Serialize("korisnici.json", Korisnici);
+            Serialize("aranzmani.json", Aranzmani);
+            Serialize("smestaji.json", Smestaji);
+            Serialize("rezervacije.json", Rezervacije);
+            Serialize("komentari.json", Komentari);
+        }
     }
 }
