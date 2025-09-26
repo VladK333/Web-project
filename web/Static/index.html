@@ -11,6 +11,17 @@
             $("#navigacioni-meni").load("/Static/NavigacioniMeni.html");
 
             preuzmiAranzmane();
+
+            $("#datumPocetkaOd, #datumPocetkaDo, #datumZavrsetkaOd, #datumZavrsetkaDo, #tipPrevoza, #tipAranzmana, #nazivAranzmana")
+                .on("input change", filtrirajAranzmane);
+
+            $("#sortNazivRastuce").on("click", () => sortirajAranzmane("naziv-rastuce"));
+            $("#sortNazivOpadajuce").on("click", () => sortirajAranzmane("naziv-opadajuce"));
+            $("#sortDatumPocetkaRastuce").on("click", () => sortirajAranzmane("pocetak-rastuce"));
+            $("#sortDatumPocetkaOpadajuce").on("click", () => sortirajAranzmane("pocetak-opadajuce"));
+            $("#sortDatumZavrsetkaRastuce").on("click", () => sortirajAranzmane("zavrsetak-rastuce"));
+            $("#sortDatumZavrsetkaOpadajuce").on("click", () => sortirajAranzmane("zavrsetak-opadajuce"));
+            $("#resetFilter").on("click", resetujFiltere);
         });
 
         let aranzmani = [];
@@ -80,6 +91,7 @@
                 const id = $(this).data("id");
                 rezervisiAranzman(id);
             });
+        }
 
             function rezervisiAranzman(aranzmanId) {
                 // backend logika: pronalazi slobodnu smestajnu jedinicu i rezervise
@@ -93,7 +105,51 @@
                         alert("Greška pri rezervaciji: " + (xhr.responseJSON?.message || xhr.statusText));
                     }
                 });
-        }
+            }
+
+            function filtrirajAranzmane() {
+                const pocetakOd = $("#datumPocetkaOd").val();
+                const pocetakDo = $("#datumPocetkaDo").val();
+                const zavrsetakOd = $("#datumZavrsetkaOd").val();
+                const zavrsetakDo = $("#datumZavrsetkaDo").val();
+                const tipPrevoza = $("#tipPrevoza").val();
+                const tipAranzmana = $("#tipAranzmana").val();
+                const naziv = $("#nazivAranzmana").val().toLowerCase();
+
+                const filtrirani = aranzmani.filter(a => {
+                    const datumPocetka = a.DatumPocetka.substring(0, 10); // yyyy-mm-dd
+                    const datumZavrsetka = a.DatumZavrsetka.substring(0, 10);
+
+                    return (!pocetakOd || datumPocetka >= pocetakOd)
+                        && (!pocetakDo || datumPocetka <= pocetakDo)
+                        && (!zavrsetakOd || datumZavrsetka >= zavrsetakOd)
+                        && (!zavrsetakDo || datumZavrsetka <= zavrsetakDo)
+                        && (!tipPrevoza || a.TipPrevoza === tipPrevoza)
+                        && (!tipAranzmana || a.TipAranzmana === tipAranzmana)
+                        && (!naziv || a.Naziv.toLowerCase().includes(naziv));
+                });
+
+                prikaziAranzmane(filtrirani);
+            }
+
+            function sortirajAranzmane(nacin) {
+                const lista = [...aranzmani];
+                switch (nacin) {
+                    case "naziv-rastuce": lista.sort((a, b) => a.Naziv.localeCompare(b.Naziv)); break;
+                    case "naziv-opadajuce": lista.sort((a, b) => b.Naziv.localeCompare(a.Naziv)); break;
+                    case "pocetak-rastuce": lista.sort((a, b) => new Date(a.DatumPocetka) - new Date(b.DatumPocetka)); break;
+                    case "pocetak-opadajuce": lista.sort((a, b) => new Date(b.DatumPocetka) - new Date(a.DatumPocetka)); break;
+                    case "zavrsetak-rastuce": lista.sort((a, b) => new Date(a.DatumZavrsetka) - new Date(b.DatumZavrsetka)); break;
+                    case "zavrsetak-opadajuce": lista.sort((a, b) => new Date(b.DatumZavrsetka) - new Date(a.DatumZavrsetka)); break;
+                }
+                prikaziAranzmane(lista);
+            }
+
+            function resetujFiltere() {
+                $("#datumPocetkaOd, #datumPocetkaDo, #datumZavrsetkaOd, #datumZavrsetkaDo, #tipPrevoza, #tipAranzmana, #nazivAranzmana").val('');
+                prikaziAranzmane(aranzmani);
+            }
+
             function formatirajDatum(datum) {
                 const dan = String(datum.getDate()).padStart(2, '0');
                 const mesec = String(datum.getMonth() + 1).padStart(2, '0');
