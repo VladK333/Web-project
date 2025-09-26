@@ -1,0 +1,64 @@
+﻿<!DOCTYPE html>
+<html lang="sr">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="../Content/tailwind.css" rel="stylesheet" />
+    <script src="../Scripts/jquery-3.7.1.min.js"></script>
+    <title>Turistički aranžmani | Početna</title>
+</head>
+
+<body class="mb-8">
+    <div id="navigacioni-meni" class="w-full"></div>
+
+    <div class="mt-12 mx-40">
+        <h1 class="text-3xl pb-8 font-semibold">Pretraga predstojećih aranžmana</h1>
+
+        <div class="grid grid-cols-1 gap-4 lg:grid-cols-3 lg:gap-8 mb-6">
+            <!-- Filter polja ostaju ista -->
+            <div>
+                <label for="datumPocetkaOd" class="block text-sm font-medium text-gray-700 mb-1">Datum početka od:</label>
+                <input type="date" id="datumPocetkaOd" class="p-2 border border-blue-500 outline-none rounded-lg w-full" />
+            </div>
+            <div>
+                <label for="datumPocetkaDo" class="block text-sm font-medium text-gray-700 mb-1">Datum početka do:</label>
+                <input type="date" id="datumPocetkaDo" class="p-2 border border-blue-500 outline-none rounded-lg w-full" />
+            </div>
+            <div>
+                <label for="datumZavrsetkaOd" class="block text-sm font-medium text-gray-700 mb-1">Datum završetka od:</label>
+                <input type="date" id="datumZavrsetkaOd" class="p-2 border border-blue-500 outline-none rounded-lg w-full" />
+            </div>
+            <div>
+                <label for="datumZavrsetkaDo" class="block text-sm font-medium text-gray-700 mb-1">Datum završetka do:</label>
+                <input type="date" id="datumZavrsetkaDo" class="p-2 border border-blue-500 outline-none rounded-lg w-full" />
+            </div>
+            <div>
+                <label for="tipPrevoza" class="block text-sm font-medium text-gray-700 mb-1">Tip prevoza:</label>
+                <select id="tipPrevoza" class="p-2 border border-blue-500 outline-none rounded-lg w-full">
+                    <option value="">Svi tipovi prevoza</option>
+                    <option value="Autobus">Autobus</option>
+                    <option value="Avion">Avion</option>
+                    <option value="Autobus+Avion">Autobus+Avion</option>
+                    <option value="Individualan">Individualan</option>
+                    <option value="Ostalo">Ostalo</option>
+                </select>
+            </div>
+            <div>
+                <label for="tipAranzmana" class="block text-sm font-medium text-gray-700 mb-1">Tip aranžmana:</label>
+                <select id="tipAranzmana" class="p-2 border border-blue-500 outline-none rounded-lg w-full">
+                    <option value="">Svi tipovi aranžmana</option>
+                    <option value="NocenjeSDoručkom">Noćenje sa doručkom</option>
+                    <option value="Polupansion">Polupansion</option>
+                    <option value="PunPansion">Pun pansion</option>
+                    <option value="AllInclusive">All inclusive</option>
+                    <option value="NajamApartmana">Najam apartmana</option>
+                </select>
+            </div>
+            <div>
+                <label for="nazivAranzmana" class="block text-sm font-medium text-gray-700 mb-1">Naziv aranžmana:</label>
+                <input type="text" id="nazivAranzmana" placeholder="Naziv aranžmana" class="p-2 border border-blue-500 outline-none rounded-lg w-full" />
+            </div>
+        </div>
+    </div>
+</body>
+</html>
