@@ -143,13 +143,27 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Controllers\AranzmaniController.cs" />
+    <Compile Include="Controllers\IdentityController.cs" />
+    <Compile Include="Controllers\KomentariController.cs" />
+    <Compile Include="Controllers\KorisniciController.cs" />
+    <Compile Include="Controllers\RezervacijeController.cs" />
+    <Compile Include="Controllers\SmestajiController.cs" />
+    <Compile Include="DTO\PrijavaDTO.cs" />
+    <Compile Include="DTO\RegistracijaDTO.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\Aranzman.cs" />
+    <Compile Include="Models\Komentar.cs" />
+    <Compile Include="Models\Korisnik.cs" />
+    <Compile Include="Models\RezervacijaAranzmana.cs" />
+    <Compile Include="Models\Smestaj.cs" />
+    <Compile Include="Models\SmestajnaJedinica.cs" />
+    <Compile Include="Podaci\BazaPodataka.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Static\images\login.jpg" />
     <Content Include="Content\tailwind.css" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
@@ -159,6 +173,7 @@
     <Content Include="Scripts\jquery-3.7.1.slim.js" />
     <Content Include="Scripts\jquery-3.7.1.slim.min.js" />
     <Content Include="Scripts\modernizr-2.8.3.js" />
+    <Content Include="Static\images\login.jpg" />
     <Content Include="Static\images\profile.jpg" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
@@ -170,10 +185,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Controllers\" />
-    <Folder Include="DTO\" />
-    <Folder Include="Models\" />
-    <Folder Include="Podaci\" />
+    <Folder Include="Podaci\json\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
