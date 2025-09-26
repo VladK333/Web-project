@@ -49,5 +49,15 @@ namespace projekat.Podaci
                 return new List<T>();
             }
         }
+
+        public static void UcitajPodatke()
+        {
+            SmestajneJedinice = Deserialize<SmestajnaJedinica>("jedinice.json");
+            Korisnici = Deserialize<Korisnik>("korisnici.json");
+            Aranzmani = Deserialize<Aranzman>("aranzmani.json");
+            Smestaji = Deserialize<Smestaj>("smestaji.json");
+            Rezervacije = Deserialize<RezervacijaAranzmana>("rezervacije.json");
+            Komentari = Deserialize<Komentar>("komentari.json");
+        }
     }
 }
