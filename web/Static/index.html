@@ -59,6 +59,21 @@
                 <input type="text" id="nazivAranzmana" placeholder="Naziv aranžmana" class="p-2 border border-blue-500 outline-none rounded-lg w-full" />
             </div>
         </div>
+
+        <div class="flex gap-2 mb-10">
+            <button id="resetFilter" class="px-3 py-2 bg-red-500 text-white rounded hover:bg-red-600">Resetuj filtere</button>
+            <button id="sortNazivRastuce" class="px-3 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">Sortiraj po nazivu (rastuce)</button>
+            <button id="sortNazivOpadajuce" class="px-3 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">Sortiraj po nazivu (opadajuce)</button>
+            <button id="sortDatumPocetkaRastuce" class="px-3 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">Sortiraj po početku (rastuce)</button>
+            <button id="sortDatumPocetkaOpadajuce" class="px-3 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">Sortiraj po početku (opadajuce)</button>
+            <button id="sortDatumZavrsetkaRastuce" class="px-3 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">Sortiraj po završetku (rastuce)</button>
+            <button id="sortDatumZavrsetkaOpadajuce" class="px-3 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">Sortiraj po završetku (opadajuce)</button>
+        </div>
+    </div>
+
+    <div class="mx-40 mt-12">
+        <h1 class="text-3xl font-semibold mb-6">Dostupni aranžmani</h1>
+        <div class="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-8" id="aranzmani-container"></div>
     </div>
 </body>
 </html>
