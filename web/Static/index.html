@@ -6,6 +6,28 @@
     <link href="../Content/tailwind.css" rel="stylesheet" />
     <script src="../Scripts/jquery-3.7.1.min.js"></script>
     <title>Turistički aranžmani | Početna</title>
+    <script>
+        $(document).ready(function () {
+            $("#navigacioni-meni").load("/Static/NavigacioniMeni.html");
+
+            preuzmiAranzmane();
+        });
+
+        let aranzmani = [];
+
+        function preuzmiAranzmane() {
+            $.ajax({
+                url: "http://localhost:51858/api/aranzmani/predstojeci",
+                method: "GET",
+                success: function (response) {
+                    aranzmani = response.data || [];
+                    prikaziAranzmane(aranzmani);
+                },
+                error: function () { console.error("Greška pri preuzimanju aranžmana"); }
+            });
+        }
+
+    </script>
 </head>
 
 <body class="mb-8">
