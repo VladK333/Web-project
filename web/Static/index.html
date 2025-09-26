@@ -27,6 +27,56 @@
             });
         }
 
+        function prikaziAranzmane(lista) {
+            const container = $("#aranzmani-container");
+            container.empty();
+
+            lista.forEach(a => {
+                const pocetak = formatirajDatumPrikaz(a.DatumPocetka);
+                const zavrsetak = formatirajDatumPrikaz(a.DatumZavrsetka);
+
+                const elem = $(`
+                     <div class="h-auto rounded-lg bg-white mb-8 shadow-lg overflow-hidden flex flex-col lg:flex-row">
+                        <div class="lg:w-1/3 h-48 lg:h-auto">
+                          <img src="${a.PosterAranzmana || 'https://via.placeholder.com/400x300?text=Aranzman'}" 
+                                class="w-full h-full object-cover" alt="Poster aranžmana">
+                        </div>
+                        <div class="p-4 lg:w-2/3 flex flex-col justify-between">
+                            <div>
+                                <h3 class="text-2xl font-bold mb-2">${a.Naziv}</h3>
+                                <p><b>Tip aranžmana:</b> ${a.TipAranzmana}</p>
+                                <p><b>Tip prevoza:</b> ${a.TipPrevoza}</p>
+                                <p><b>Lokacija:</b> ${a.Lokacija || '-'}</p>
+                                <p><b>Datum putovanja:</b> ${pocetak} - ${zavrsetak}</p>
+                            </div>
+                        <div class="mt-4 flex gap-2">
+                            <button class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 dugme-detalji" data-id="${a.Id}">
+                                Detalji
+                            </button>
+                        </div>
+                     </div>
+                    </div>
+    `           );
+
+                container.append(elem);
+            });
+
+            // Funkcija za lep prikaz datuma: dd.MM.yyyy
+            function formatirajDatumPrikaz(datumStr) {
+                const d = new Date(datumStr);
+                const dan = String(d.getDate()).padStart(2, '0');
+                const mesec = String(d.getMonth() + 1).padStart(2, '0');
+                const godina = d.getFullYear();
+                return `${dan}.${mesec}.${godina}`;
+            }
+
+            // bind dugmad
+            $(".dugme-detalji").on("click", function () {
+                const id = $(this).data("id");
+                window.location.href = `/Static/DetaljiAranzmana.html?id=${id}`;
+            });
+        }
+
     </script>
 </head>
 
