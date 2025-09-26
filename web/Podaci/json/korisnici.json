@@ -1,1 +1,28 @@
-[]
+[
+  {
+    "Id": 1,
+    "KorisnickoIme": "admin",
+    "Lozinka": "admin",
+    "Ime": "admin",
+    "Prezime": "admin",
+    "Email": "123@admin.com",
+    "DatumRodjenja": "12/06/2024",
+    "Pol": "Muski",
+    "TipKorisnika": 0,
+    "Rezervacije": [],
+    "KreiraniAranzmani": []
+  },
+  {
+    "Id": 1758845237,
+    "KorisnickoIme": "menadzer",
+    "Lozinka": "123456",
+    "Ime": "Menadzer",
+    "Prezime": "Menadzer",
+    "Email": "menadzer@menadzer.com",
+    "DatumRodjenja": "17/09/2025",
+    "Pol": "Muski",
+    "TipKorisnika": 2,
+    "Rezervacije": [],
+    "KreiraniAranzmani": []
+  }
+]
