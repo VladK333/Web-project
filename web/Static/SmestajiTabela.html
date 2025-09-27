@@ -7,17 +7,251 @@
     <link href="../Content/tailwind.css" rel="stylesheet">
     <script src="../Scripts/jquery-3.7.1.min.js"></script>
     <title>Upravljanje Smeštajima</title>
+    <script>
+        $(document).ready(function () {
+            let trenutniSmestaj = null;
+
+            // --- Funkcija za dodavanje nove smestajne jedinice u formu ---
+            function dodajSmestajnuJedinicu(podaci = null) {
+                const jedinicaId = podaci && podaci.Id ? podaci.Id : null;
+
+                const jedinicaHtml = `
+                            <div class="jedinica-container p-4 border border-gray-300 rounded mb-4" data-id="${jedinicaId || ''}">
+                                <h3 class="text-md font-semibold mb-2">Smeštajna jedinica</h3>
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                    <input type="number" class="brojKreveta w-full border border-blue-500 p-2 rounded" placeholder="Broj kreveta" min="1" required value="${podaci ? podaci.BrojKreveta : ''}">
+                                    <input type="number" class="cenaJedinice w-full border border-blue-500 p-2 rounded" placeholder="Cena (RSD)" min="0" step="0.01" required value="${podaci ? podaci.Cena : ''}">
+                                    <div class="flex items-center">
+                                        <input type="checkbox" class="kucniLjubimci mr-2" ${podaci && podaci.DozvoljenBoravakKucnimLjubimcima ? 'checked' : ''}>
+                                        <label>Dozvoljeni kućni ljubimci</label>
+                                        <button type="button" class="ukloniJedinicu ml-4 bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600">Ukloni</button>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                $('#smestajneJediniceContainer').append(jedinicaHtml);
+
+                // Event handler za uklanjanje jedinice
+                $('#smestajneJediniceContainer .jedinica-container:last .ukloniJedinicu').on('click', function () {
+                    const container = $(this).closest('.jedinica-container');
+                    container.remove();
+                });
+            }
+
+            // Dodaj prvu jedinicu pri otvaranju forme
+            dodajSmestajnuJedinicu();
+
+            // Dugme za dodavanje nove jedinice
+            $('#dodajJedinicu').on('click', function () {
+                dodajSmestajnuJedinicu();
+            });
+
+            // --- Funkcija za prikaz smestaja u tabeli ---
+            function prikaziSmestaje(smestaji) {
+                const tabelaTela = $('#tabelaSmestaja tbody');
+                tabelaTela.empty();
+                smestaji.forEach(smestaj => {
+                    const red = $('<tr>');
+
+                    const tipMapping = { 0: 'Hotel', 1: 'Motel', 2: 'Vila' };
+                    const tipText = typeof smestaj.Tip === 'string' ? smestaj.Tip : (tipMapping[smestaj.Tip] || 'Nepoznato');
+
+                    red.html(`
+                                <td class="border px-4 py-2">${smestaj.Naziv}</td>
+                                <td class="border px-4 py-2">${tipText}</td>
+                                <td class="border px-4 py-2">${smestaj.BrojZvezdica}</td>
+                                <td class="border px-4 py-2">${smestaj.ImaBazen ? 'Da' : 'Ne'}</td>
+                                <td class="border px-4 py-2">${smestaj.ImaSpaCentar ? 'Da' : 'Ne'}</td>
+                                <td class="border px-4 py-2">${smestaj.ImaWifi ? 'Da' : 'Ne'}</td>
+                                <td class="border px-4 py-2">${smestaj.PrilagodjenoZaInvaliditet ? 'Da' : 'Ne'}</td>
+                                <td class="border px-4 py-2">
+                                    <button onclick="izmeniSmestaj(${smestaj.Id})" class="bg-yellow-500 text-white px-2 py-1 rounded hover:bg-yellow-600 mr-1">Izmeni</button>
+                                    <button onclick="obrisiSmestaj(${smestaj.Id})" class="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600">Obriši</button>
+                                </td>
+                            `);
+                    tabelaTela.append(red);
+                });
+            }
+
+            // --- Dohvati sve smestaje ---
+            function dobaviSveSmestaje() {
+                $.ajax({
+                    url: 'http://localhost:51858/api/smestaji/svi',
+                    method: 'GET',
+                    success: function (odgovor) {
+                        if (odgovor && odgovor.data) {
+                            prikaziSmestaje(odgovor.data);
+                        }
+                    },
+                    error: function () {
+                        alert('Greška pri dohvaćanju smeštaja!');
+                    }
+                });
+            }
+
+            // --- Globalne funkcije ---
+            window.izmeniSmestaj = function (id) {
+                $.ajax({
+                    url: `http://localhost:51858/api/smestaji/get/${id}`,
+                    method: 'GET',
+                    success: function (odgovor) {
+                        if (odgovor && odgovor.data) {
+                            trenutniSmestaj = odgovor.data;
+
+                            $('#nazivSmestaja').val(trenutniSmestaj.Naziv);
+                            $('#tipSmestaja').val(typeof trenutniSmestaj.Tip === 'string'
+                                ? { 'Hotel': 0, 'Motel': 1, 'Vila': 2 }[trenutniSmestaj.Tip]
+                                : trenutniSmestaj.Tip);
+                            $('#brojZvezdica').val(trenutniSmestaj.BrojZvezdica);
+                            $('#imaBazen').prop('checked', trenutniSmestaj.ImaBazen);
+                            $('#imaSpaCentar').prop('checked', trenutniSmestaj.ImaSpaCentar);
+                            $('#imaWifi').prop('checked', trenutniSmestaj.ImaWifi);
+                            $('#prilagodjenoZaInvaliditet').prop('checked', trenutniSmestaj.PrilagodjenoZaInvaliditet);
+
+                            // Popuni jedinice
+                            $('#smestajneJediniceContainer').empty();
+                            if (trenutniSmestaj.SmestajneJedinice && trenutniSmestaj.SmestajneJedinice.length > 0) {
+                                trenutniSmestaj.SmestajneJedinice.forEach(j => {
+                                    dodajSmestajnuJedinicu(j);
+                                });
+                            } else {
+                                dodajSmestajnuJedinicu();
+                            }
+
+                            $('#dugmeSmestaj').text('Ažuriraj smeštaj');
+                        }
+                    },
+                    error: function () {
+                        alert('Greška pri dohvaćanju smeštaja!');
+                    }
+                });
+            };
+
+            window.obrisiSmestaj = function (id) {
+                if (confirm('Da li ste sigurni da želite da obrišete ovaj smeštaj?')) {
+                    $.ajax({
+                        url: `http://localhost:51858/api/smestaji/obrisi/${id}`,
+                        method: 'DELETE',
+                        success: function () {
+                            alert('Smeštaj je uspešno obrisan!');
+                            dobaviSveSmestaje();
+                        },
+                        error: function (xhr) {
+                            const poruka = xhr.responseJSON ? xhr.responseJSON.message : 'Greška pri brisanju smeštaja!';
+                            alert(poruka);
+                        }
+                    });
+                }
+            };
+
+            // --- Dodavanje/Izmena smestaja ---
+            $('#dodajSmestajForm').submit(function (event) {
+                event.preventDefault();
+
+                // Sakupi podatke o smestajnim jedinicama
+                const jediniceData = [];
+                $('#smestajneJediniceContainer .jedinica-container').each(function () {
+                    const brojKreveta = parseInt($(this).find('.brojKreveta').val());
+                    const cena = parseFloat($(this).find('.cenaJedinice').val());
+                    const kucniLjubimci = $(this).find('.kucniLjubimci').is(':checked');
+                    const idJedinice = $(this).data('id') || 0; // ako nema ID -> nova jedinica
+
+                    if (brojKreveta && cena) {
+                        jediniceData.push({
+                            Id: idJedinice,
+                            BrojKreveta: brojKreveta,
+                            Cena: cena,
+                            DozvoljenBoravakKucnimLjubimcima: kucniLjubimci
+                        });
+                    }
+                });
+
+                if (jediniceData.length === 0) {
+                    $('#greskaSmestaj').text('Morate dodati najmanje jednu smeštajnu jedinicu!');
+                    return;
+                }
+
+                const podaci = {
+                    Naziv: $('#nazivSmestaja').val(),
+                    Tip: parseInt($('#tipSmestaja').val()),
+                    BrojZvezdica: parseInt($('#brojZvezdica').val()),
+                    ImaBazen: $('#imaBazen').is(':checked'),
+                    ImaSpaCentar: $('#imaSpaCentar').is(':checked'),
+                    ImaWifi: $('#imaWifi').is(':checked'),
+                    PrilagodjenoZaInvaliditet: $('#prilagodjenoZaInvaliditet').is(':checked'),
+                    SmestajneJedinice: jediniceData
+                };
+
+                const url = trenutniSmestaj
+                    ? `http://localhost:51858/api/smestaji/azuriraj/${trenutniSmestaj.Id}`
+                    : 'http://localhost:51858/api/smestaji/dodaj';
+                const metod = trenutniSmestaj ? 'PUT' : 'POST';
+
+                $.ajax({
+                    url: url,
+                    type: metod,
+                    contentType: 'application/json',
+                    data: JSON.stringify(podaci),
+                    success: function () {
+                        alert(trenutniSmestaj ? 'Smeštaj je uspešno ažuriran!' : 'Smeštaj je uspešno dodat!');
+                        dobaviSveSmestaje();
+                        resetFormu();
+                    },
+                    error: function (xhr) {
+                        const poruka = xhr.responseJSON ? xhr.responseJSON.message : 'Greška! Proverite podatke.';
+                        $('#greskaSmestaj').text(poruka);
+                    }
+                });
+            });
+
+            // --- Funkcija za resetovanje forme ---
+            function resetFormu() {
+                $('#dodajSmestajForm')[0].reset();
+                $('#greskaSmestaj').text('');
+                trenutniSmestaj = null;
+                $('#dugmeSmestaj').text('Dodaj smeštaj');
+                $('#smestajneJediniceContainer').empty();
+                dodajSmestajnuJedinicu();
+            }
+
+            $('#resetSmestajForm').on('click', function () {
+                resetFormu();
+            });
+
+            // --- Filtri ---
+            $('#dugmeFiltriranje').on('click', function () {
+                const nazivFilter = $('#pretragaNaziva').val().trim().toLowerCase();
+                const tipFilter = $('#filterTip').val();
+
+                $('#tabelaSmestaja tbody tr').each(function () {
+                    const naziv = $(this).find('td:nth-child(1)').text().toLowerCase();
+                    const tip = $(this).find('td:nth-child(2)').text();
+                    const prikazi = (!nazivFilter || naziv.includes(nazivFilter)) &&
+                        (!tipFilter || tip === tipFilter);
+                    $(this).toggle(prikazi);
+                });
+            });
+
+            $('#dugmeResetovanje').on('click', function () {
+                $('#pretragaNaziva, #filterTip').val('');
+                $('#tabelaSmestaja tbody tr').show();
+            });
+
+            // Ucitaj sve smestaje na pocetku
+            dobaviSveSmestaje();
+        });
+    </script>
 </head>
 
 <body class="p-4">
 
     <h1 class="text-2xl font-bold mb-4">Upravljanje smeštajima</h1>
 
-    <!-- FORMA ZA DODAVANJE/IZMENU SMEŠTAJA -->
+    <!-- FORMA ZA DODAVANJE/IZMENU SMESTAJA -->
     <form id="dodajSmestajForm" class="p-4 border rounded-lg bg-gray-50 mb-8">
         <h2 class="text-lg font-semibold mb-4">Dodaj/Izmeni smeštaj</h2>
 
-        <!-- Osnovni podaci o smeštaju -->
+        <!-- Osnovni podaci o smstaju -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
             <input type="text" id="nazivSmestaja" placeholder="Naziv smeštaja" required
                    class="w-full border border-blue-500 p-2 rounded focus:outline-none focus:border-blue-600">
@@ -57,7 +291,7 @@
             </div>
         </div>
 
-        <!-- Smeštajne jedinice -->
+        <!-- Smestajne jedinice -->
         <div class="mb-6">
             <div class="flex justify-between items-center mb-4">
                 <h3 class="text-md font-semibold">Smeštajne jedinice</h3>
@@ -66,7 +300,7 @@
                 </button>
             </div>
             <div id="smestajneJediniceContainer">
-                <!-- Dinamički sadržaj za smeštajne jedinice -->
+                <!-- Dinamicki sadrzzaj za smesatajne jedinice -->
             </div>
         </div>
 
@@ -106,7 +340,7 @@
         </button>
     </div>
 
-    <!-- TABELA SMEŠTAJA -->
+    <!-- TABELA SMESTAJA -->
     <table id="tabelaSmestaja" class="w-full text-center border-collapse border border-gray-400 rounded-lg overflow-hidden">
         <thead class="bg-blue-400 text-gray-700">
             <tr>
@@ -121,7 +355,7 @@
             </tr>
         </thead>
         <tbody>
-            <!-- Dinamički podaci -->
+            <!-- Dinamicki podaci -->
         </tbody>
     </table>
 
