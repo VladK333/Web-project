@@ -7,6 +7,96 @@
     <link href="../Content/tailwind.css" rel="stylesheet">
     <script src="../Scripts/jquery-3.7.1.min.js"></script>
     <title>Korisnici i Menadžeri</title>
+    <script>
+        $(document).ready(function () {
+
+            // --- Funkcija za prikaz korisnika u tabeli ---
+            function prikaziKorisnike(korisnici) {
+                const tabelaTela = $('#tabelaKorisnika tbody');
+                tabelaTela.empty();
+                korisnici.forEach(korisnik => {
+                    const red = $('<tr>');
+                    red.html(`
+                             <td>${korisnik.Ime} ${korisnik.Prezime}</td>
+                             <td>${korisnik.DatumRodjenja}</td>
+                             <td>${korisnik.KorisnickoIme}</td>
+                             <td>${korisnik.Email}</td>
+                             <td>${korisnik.Pol}</td>
+                             <td>${korisnik.TipKorisnika}</td>
+                         `);
+                    tabelaTela.append(red);
+                });
+            }
+
+            // --- Dohvati sve korisnike ---
+            function dobaviSveKorisnike() {
+                $.ajax({
+                    url: 'http://localhost:51858/api/korisnici/svi',
+                    method: 'GET',
+                    success: function (odgovor) {
+                        if (odgovor && odgovor.data) {
+                            prikaziKorisnike(odgovor.data);
+                        }
+                    },
+                    error: function () {
+                        alert('Greška pri dohvaćanju korisnika!');
+                    }
+                });
+            }
+            dobaviSveKorisnike();
+
+            // --- Filter po imenu, prezimenu i ulozi ---
+            $('#dugmeFiltriranje').on('click', function () {
+                const imeFilter = $('#pretragaImena').val().trim().toLowerCase();
+                const prezimeFilter = $('#pretragaPrezimena').val().trim().toLowerCase();
+                const ulogaFilter = $('#filterUloga').val();
+                $('#tabelaKorisnika tbody tr').each(function () {
+                    const ime = $(this).find('td:nth-child(1)').text().split(' ')[0].toLowerCase();
+                    const prezime = $(this).find('td:nth-child(1)').text().split(' ')[1]?.toLowerCase() || '';
+                    const uloga = $(this).find('td:nth-child(6)').text();
+                    const prikazi = (!imeFilter || ime.includes(imeFilter)) &&
+                        (!prezimeFilter || prezime.includes(prezimeFilter)) &&
+                        (!ulogaFilter || uloga === ulogaFilter);
+                    $(this).toggle(prikazi);
+                });
+            });
+
+            $('#dugmeResetovanje').on('click', function () {
+                $('#pretragaImena, #pretragaPrezimena, #filterUloga').val('');
+                $('#tabelaKorisnika tbody tr').show();
+            });
+
+            // --- Registracija novog menadžera ---
+            $('#dodajMenadzeraForm').submit(function (event) {
+                event.preventDefault();
+                const podaci = {
+                    KorisnickoIme: $('#username').val(),
+                    Lozinka: $('#password').val(),
+                    Ime: $('#ime').val(),
+                    Prezime: $('#prezime').val(),
+                    Email: $('#email').val(),
+                    DatumRodjenja: $('#datumRodjenja').val(),
+                    Pol: $('#pol').val()
+                };
+                $.ajax({
+                    url: 'http://localhost:51858/api/identity/dodajmenadzera',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(podaci),
+                    success: function () {
+                        alert('Menadžer je uspešno dodat!');
+                        dobaviSveKorisnike();
+                        $('#dodajMenadzeraForm')[0].reset();
+                        $('#greska').text('');
+                    },
+                    error: function () {
+                        $('#greska').text('Greška! Proverite podatke.');
+                    }
+                });
+            });
+
+        });
+    </script>
 </head>
 
 <body class="p-4">
