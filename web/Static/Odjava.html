@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="sr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="../Content/tailwind.css" rel="stylesheet">
+    <script src="../Scripts/jquery-3.7.1.min.js"></script>
+    <title>Odjava...</title>
+    <script>
+        $.ajax({
+            url: 'http://localhost:51858/api/identity/odjava',
+            type: 'GET',
+            success: function (response) {
+                window.location.href = "index.html";
+            }
+        });
+    </script>
+</head>
+
+<body>
+    <h1>Odjavljivanje...</h1>
+</body>
+
+</html>

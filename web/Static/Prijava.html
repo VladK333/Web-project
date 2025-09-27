@@ -18,6 +18,34 @@
                 }
             }
         });
+
+        $(document).ready(function () {
+            $('#navigation-menu').load('NavigacioniMeni.html', function (response, status, xhr) {
+                if (status === 'error') {
+                    console.error('Greška pri učitavanju menija:', xhr.status, xhr.statusText);
+                }
+            });
+
+            $('#loginForm').submit(function (event) {
+                event.preventDefault();
+
+                var korisnickoIme = $('#username').val();
+                var lozinka = $('#password').val();
+
+                $.ajax({
+                    url: 'http://localhost:51858/api/identity/prijava',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({ KorisnickoIme: korisnickoIme, Lozinka: lozinka }),
+                    success: function (response) {
+                        window.location.href = 'Profil.html';
+                    },
+                    error: function () {
+                        $('#greska').text("Proverite unete podatke!");
+                    }
+                });
+            });
+        });
     </script>
 </head>
 
