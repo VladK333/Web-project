@@ -185,8 +185,10 @@
     <Content Include="Static\images\profile.jpg" />
     <Content Include="Static\index.html" />
     <Content Include="Static\NavigacioniMeni.html" />
+    <Content Include="Static\Odjava.html" />
     <Content Include="Static\Prijava.html" />
     <Content Include="Static\Profil.html" />
+    <Content Include="Static\Registracija.html" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
