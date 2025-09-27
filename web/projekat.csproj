@@ -151,6 +151,8 @@
     <Compile Include="Controllers\SmestajiController.cs" />
     <Compile Include="DTO\PrijavaDTO.cs" />
     <Compile Include="DTO\RegistracijaDTO.cs" />
+    <Compile Include="DTO\SmestajDTO.cs" />
+    <Compile Include="DTO\SmestajnaJedinicaDTO.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
