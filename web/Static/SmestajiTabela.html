@@ -1,0 +1,130 @@
+﻿<!DOCTYPE html>
+<html lang="sr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="../Content/tailwind.css" rel="stylesheet">
+    <script src="../Scripts/jquery-3.7.1.min.js"></script>
+    <title>Upravljanje Smeštajima</title>
+</head>
+
+<body class="p-4">
+
+    <h1 class="text-2xl font-bold mb-4">Upravljanje smeštajima</h1>
+
+    <!-- FORMA ZA DODAVANJE/IZMENU SMEŠTAJA -->
+    <form id="dodajSmestajForm" class="p-4 border rounded-lg bg-gray-50 mb-8">
+        <h2 class="text-lg font-semibold mb-4">Dodaj/Izmeni smeštaj</h2>
+
+        <!-- Osnovni podaci o smeštaju -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+            <input type="text" id="nazivSmestaja" placeholder="Naziv smeštaja" required
+                   class="w-full border border-blue-500 p-2 rounded focus:outline-none focus:border-blue-600">
+
+            <select id="tipSmestaja" required
+                    class="w-full border border-blue-500 p-2 rounded focus:outline-none focus:border-blue-600">
+                <option value="">Izaberite tip</option>
+                <option value="0">Hotel</option>
+                <option value="1">Motel</option>
+                <option value="2">Vila</option>
+            </select>
+
+            <input type="number" id="brojZvezdica" placeholder="Broj zvezdica" min="1" max="5" required
+                   class="w-full border border-blue-500 p-2 rounded focus:outline-none focus:border-blue-600">
+        </div>
+
+        <!-- Checkbox opcije -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+            <div class="flex items-center">
+                <input type="checkbox" id="imaBazen" class="mr-2">
+                <label for="imaBazen">Ima bazen</label>
+            </div>
+
+            <div class="flex items-center">
+                <input type="checkbox" id="imaSpaCentar" class="mr-2">
+                <label for="imaSpaCentar">Ima spa centar</label>
+            </div>
+
+            <div class="flex items-center">
+                <input type="checkbox" id="imaWifi" class="mr-2">
+                <label for="imaWifi">Ima WiFi</label>
+            </div>
+
+            <div class="flex items-center">
+                <input type="checkbox" id="prilagodjenoZaInvaliditet" class="mr-2">
+                <label for="prilagodjenoZaInvaliditet">Prilagođeno za invaliditet</label>
+            </div>
+        </div>
+
+        <!-- Smeštajne jedinice -->
+        <div class="mb-6">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-md font-semibold">Smeštajne jedinice</h3>
+                <button type="button" id="dodajJedinicu" class="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600">
+                    + Dodaj jedinicu
+                </button>
+            </div>
+            <div id="smestajneJediniceContainer">
+                <!-- Dinamički sadržaj za smeštajne jedinice -->
+            </div>
+        </div>
+
+        <div class="flex justify-between items-center">
+            <div class="text-red-500" id="greskaSmestaj"></div>
+            <div class="flex gap-2">
+                <button type="submit" id="dugmeSmestaj" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+                    Dodaj smeštaj
+                </button>
+                <button type="button" id="resetSmestajForm" class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">
+                    Resetuj
+                </button>
+            </div>
+        </div>
+    </form>
+
+    <h2 class="text-xl font-bold mb-4">Pregled smeštaja</h2>
+
+    <!-- FILTER -->
+    <div class="flex gap-2 mb-4">
+        <input type="text" id="pretragaNaziva" placeholder="Naziv smeštaja"
+               class="border border-blue-500 rounded px-3 py-1 focus:outline-none focus:border-blue-600">
+        <select id="filterTip"
+                class="border border-blue-500 rounded px-3 py-1 focus:outline-none focus:border-blue-600">
+            <option value="">Svi tipovi</option>
+            <option value="Hotel">Hotel</option>
+            <option value="Motel">Motel</option>
+            <option value="Vila">Vila</option>
+        </select>
+        <button id="dugmeFiltriranje"
+                class="bg-blue-500 text-white px-4 py-1 rounded hover:bg-blue-600">
+            Filtriraj
+        </button>
+        <button id="dugmeResetovanje"
+                class="bg-red-500 text-white px-4 py-1 rounded hover:bg-red-600">
+            Resetuj
+        </button>
+    </div>
+
+    <!-- TABELA SMEŠTAJA -->
+    <table id="tabelaSmestaja" class="w-full text-center border-collapse border border-gray-400 rounded-lg overflow-hidden">
+        <thead class="bg-blue-400 text-gray-700">
+            <tr>
+                <th class="border px-4 py-2">Naziv</th>
+                <th class="border px-4 py-2">Tip</th>
+                <th class="border px-4 py-2">Broj zvezdica</th>
+                <th class="border px-4 py-2">Bazen</th>
+                <th class="border px-4 py-2">Spa centar</th>
+                <th class="border px-4 py-2">WiFi</th>
+                <th class="border px-4 py-2">Invaliditet</th>
+                <th class="border px-4 py-2">Akcije</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Dinamički podaci -->
+        </tbody>
+    </table>
+
+</body>
+
+</html>

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="sr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="../Content/tailwind.css" rel="stylesheet">
+    <script src="../Scripts/jquery-3.7.1.min.js"></script>
+    <title>Korisnici i Menadžeri</title>
+</head>
+
+<body class="p-4">
+
+    <h1 class="text-2xl font-bold mb-4">Dodaj novog menadžera</h1>
+
+    <!-- FORMA ZA DODAVANJE MENADŽERA (3 inputa po redu) -->
+    <form id="dodajMenadzeraForm" class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+        <input type="text" id="username" placeholder="Korisničko ime"
+               class="w-full border border-blue-500 p-2 rounded focus:outline-none focus:border-blue-600">
+        <input type="password" id="password" placeholder="Lozinka"
+               class="w-full border border-blue-500 p-2 rounded focus:outline-none focus:border-blue-600">
+        <input type="text" id="ime" placeholder="Ime"
+               class="w-full border border-blue-500 p-2 rounded focus:outline-none focus:border-blue-600">
+        <input type="text" id="prezime" placeholder="Prezime"
+               class="w-full border border-blue-500 p-2 rounded focus:outline-none focus:border-blue-600">
+        <input type="email" id="email" placeholder="Email"
+               class="w-full border border-blue-500 p-2 rounded focus:outline-none focus:border-blue-600">
+        <input type="date" id="datumRodjenja"
+               class="w-full border border-blue-500 p-2 rounded focus:outline-none focus:border-blue-600">
+        <select id="pol"
+                class="w-full border border-blue-500 p-2 rounded focus:outline-none focus:border-blue-600">
+            <option value="Muski">Muški</option>
+            <option value="Zenski">Ženski</option>
+            <option value="Drugo">Drugo</option>
+        </select>
+        <div class="col-span-2 text-red-500" id="greska"></div>
+        <button type="submit" class="bg-blue-500 w-1/2 text-white px-4 py-2 rounded hover:bg-blue-600">
+            Dodaj menadžera
+        </button>
+    </form>
+
+    <h1 class="text-2xl font-bold mb-4">Pregled korisnika sistema</h1>
+
+    <!-- FILTER -->
+    <div class="flex gap-2 mb-4">
+        <input type="text" id="pretragaImena" placeholder="Ime"
+               class="border border-blue-500 rounded px-3 py-1 focus:outline-none focus:border-blue-600">
+        <input type="text" id="pretragaPrezimena" placeholder="Prezime"
+               class="border border-blue-500 rounded px-3 py-1 focus:outline-none focus:border-blue-600">
+        <select id="filterUloga"
+                class="border border-blue-500 rounded px-3 py-1 focus:outline-none focus:border-blue-600">
+            <option value="">Sve uloge</option>
+            <option value="MENADZER">Menadžer</option>
+            <option value="ADMIN">Admin</option>
+            <option value="TURISTA">Turista</option>
+        </select>
+        <button id="dugmeFiltriranje"
+                class="bg-blue-500 text-white px-4 py-1 rounded hover:bg-blue-600">
+            Filtriraj
+        </button>
+        <input type="reset" id="dugmeResetovanje"
+               class="bg-red-500 text-white px-4 py-1 rounded hover:bg-red-600" value="Resetuj">
+    </div>
+
+    <!-- TABELA KORISNIKA -->
+    <table id="tabelaKorisnika" class="w-full text-center border rounded-lg overflow-hidden">
+        <thead class="bg-blue-400 text-gray-700 uppercase">
+            <tr>
+                <th class="px-4 py-2">Ime i prezime</th>
+                <th class="px-4 py-2">Datum rođenja</th>
+                <th class="px-4 py-2">Korisničko ime</th>
+                <th class="px-4 py-2">Email</th>
+                <th class="px-4 py-2">Pol</th>
+                <th class="px-4 py-2">Uloga</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Dinamički podaci -->
+        </tbody>
+    </table>
+
+</body>
+
+</html>
