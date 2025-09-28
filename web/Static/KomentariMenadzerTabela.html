@@ -1,0 +1,82 @@
+﻿<!DOCTYPE html>
+<html lang="sr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="../Content/tailwind.css" rel="stylesheet">
+    <script src="../Scripts/jquery-3.7.1.min.js"></script>
+    <title>Profil</title>
+</head>
+<body>
+    <h1 class="text-3xl font-bold mb-6">Komentari za moje aranžmane</h1>
+
+    <table id="tabelaKomentara" class="w-full text-center border rounded-lg">
+        <thead>
+            <tr>
+                <th>ID komentara</th>
+                <th>Rezervacija ID</th>
+                <th>Turista</th>
+                <th>Smeštaj</th>
+                <th>Tekst</th>
+                <th>Ocena</th>
+                <th>Status</th>
+                <th>Akcije</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <script>
+        $(function () {
+            function ucitajKomentare() {
+                $.get("/api/komentari/menadzer")
+                    .done(function (resp) {
+                        const tbody = $("#tabelaKomentara tbody").empty();
+
+                        resp.data.forEach(k => {
+                            let akcije = "";
+                            if (k.Status === "KREIRAN") {
+                                akcije = k.Status === "KREIRAN"
+                                    ? `<button class="odobri bg-green-500 text-white px-3 py-1 rounded mr-2" data-id="${k.KomentarId}">Odobri</button>
+                                       <button class="odbij bg-red-500 text-white px-3 py-1 rounded" data-id="${k.KomentarId}">Odbij</button>`
+                                    : "";
+                            }
+                            tbody.append(`
+                            <tr>
+                                <td>${k.KomentarId}</td>
+                                <td>${k.RezervacijaId}</td>
+                                <td>${k.Turista}</td>
+                                <td>${k.Smestaj}</td>
+                                <td>${k.Tekst}</td>
+                                <td>${k.Ocena}</td>
+                                <td>${k.Status}</td>
+                                <td>${akcije}</td>
+                            </tr>
+                        `);
+                        });
+                    });
+            }
+
+            // odobri
+            $("#tabelaKomentara").on("click", ".odobri", function () {
+                const id = $(this).data("id");
+                $.ajax({ url: `/api/komentari/odobri/${id}`, method: "PATCH" })
+                    .done(ucitajKomentare)
+                    .fail(() => alert("Greška pri odobravanju komentara"));
+            });
+
+            // odbij
+            $("#tabelaKomentara").on("click", ".odbij", function () {
+                const id = $(this).data("id");
+                $.ajax({ url: `/api/komentari/odbij/${id}`, method: "PATCH" })
+                    .done(ucitajKomentare)
+                    .fail(() => alert("Greška pri odbijanju komentara"));
+            });
+
+            ucitajKomentare();
+        });
+    </script>
+
+</body>
+</html>
