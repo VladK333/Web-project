@@ -1,0 +1,41 @@
+﻿<!DOCTYPE html>
+<html lang="sr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="../Content/tailwind.css" rel="stylesheet">
+    <script src="../Scripts/jquery-3.7.1.min.js"></script>
+    <title>Moje rezervacije - Turistička agencija</title>
+</head>
+
+<body class="p-6">
+    <h1 class="text-3xl font-bold mb-6">Moje rezervacije</h1>
+
+    <div class="flex gap-2 mb-4">
+        <input type="text" id="filterId" placeholder="Pretraga po ID" class="border rounded px-3 py-1">
+        <input type="text" id="filterNaziv" placeholder="Pretraga po nazivu aranžmana" class="border rounded px-3 py-1">
+        <select id="filterStatus" class="border rounded px-3 py-1">
+            <option value="">Svi statusi</option>
+            <option value="AKTIVNA">Aktivna</option>
+            <option value="OTKAZANA">Otkazana</option>
+        </select>
+        <button id="btnPretrazi" class="bg-blue-500 text-white px-4 py-1 rounded">Pretraži</button>
+    </div>
+
+    <table id="tabelaRezervacija" class="w-full text-center border rounded-lg">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Naziv aranžmana</th>
+                <th>Status</th>
+                <th>Polazak</th>
+                <th>Dolazak</th>
+                <th>Smeštaj</th>
+                <th>Akcije</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+</body>
+</html>

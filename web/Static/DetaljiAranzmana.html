@@ -64,6 +64,23 @@
 
                         prikaziJedinice(smestajJedinice);
 
+                        // Prikaz komentara
+                        const komentarContainer = $("#komentariContainer");
+                        $.ajax({
+                            url: `http://localhost:51858/api/komentari/smestaj/${a.Smestaj.Id}`,
+                            method: "GET",
+                            success: function (res) {
+                                komentarContainer.empty();
+                                res.data.filter(k => k.Status === "ODOBREN").forEach(k => {
+                                    komentarContainer.append(`
+                                            <div class="border p-2 mb-2 bg-white rounded">
+                                                <p>${k.Tekst}</p>
+                                                <p><b>Ocena:</b> ${k.Ocena}/5</p>
+                                            </div>
+                                        `);
+                                });
+                            }
+                        });
                     },
                     error: function () { alert("Greška pri učitavanju detalja aranžmana"); }
                 });
@@ -99,6 +116,61 @@
                      `);
                     container.append(elem);
                 });
+
+                // Dugme rezervacije
+                $(".rezervisiBtn").on("click", function () {
+                    const jedinicaId = $(this).data("jedinica-id");
+                    $.ajax({
+                        url: `http://localhost:51858/api/rezervacije/dodaj`,
+                        method: "POST",
+                        contentType: "application/json",
+                        data: JSON.stringify({ AranzmanId: aranzmanId, SmestajnaJedinicaId: jedinicaId }),
+                        success: function () {
+                            alert("Rezervacija uspešno izvršena!");
+                            ucitajDetalje(); // osveži podatke
+                        },
+                        error: function () { alert("Greška pri rezervaciji"); }
+                    });
+                });
+            }
+
+            function filtrirajJedinice() {
+                let lista = [...smestajJedinice];
+
+                const minGostiju = parseInt($("#filterMinGostiju").val()) || 0;
+                const maxGostiju = parseInt($("#filterMaxGostiju").val()) || Infinity;
+                const ljubimciVal = $("#filterKucniLjubimci").val();
+                const cenaMax = parseFloat($("#filterCena").val()) || Infinity;
+
+                lista = lista.filter(j =>
+                    j.DozvoljenBrojGostiju >= minGostiju &&
+                    j.DozvoljenBrojGostiju <= maxGostiju &&
+                    j.Cena <= cenaMax
+                );
+
+                if (ljubimciVal === "true") lista = lista.filter(j => j.DozvoljenBoravakKucnimLjubimcima);
+                if (ljubimciVal === "false") lista = lista.filter(j => !j.DozvoljenBoravakKucnimLjubimcima);
+
+                const sortVal = $("#sortJedinice").val();
+                if (sortVal === "brojRastuće") lista.sort((a, b) => a.DozvoljenBrojGostiju - b.DozvoljenBrojGostiju);
+                if (sortVal === "brojOpadajuće") lista.sort((a, b) => b.DozvoljenBrojGostiju - a.DozvoljenBrojGostiju);
+                if (sortVal === "cenaRastuće") lista.sort((a, b) => a.Cena - b.Cena);
+                if (sortVal === "cenaOpadajuće") lista.sort((a, b) => b.Cena - a.Cena);
+
+                prikaziJedinice(lista);
+            }
+
+            $("#filterMinGostiju, #filterMaxGostiju, #filterKucniLjubimci, #filterCena, #sortJedinice")
+                .on("input change", filtrirajJedinice);
+
+            ucitajDetalje();
+
+            function formatDatum(d) {
+                const date = new Date(d);
+                const dan = String(date.getDate()).padStart(2, '0');
+                const mesec = String(date.getMonth() + 1).padStart(2, '0');
+                const godina = date.getFullYear();
+                return `${dan}.${mesec}.${godina}`;
             }
         });
     </script>
