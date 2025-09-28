@@ -1,0 +1,158 @@
+﻿<!DOCTYPE html>
+<html lang="sr">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="../Content/tailwind.css" rel="stylesheet" />
+    <script src="../Scripts/jquery-3.7.1.min.js"></script>
+    <title>Detalji aranžmana</title>
+    <script>
+        $(document).ready(function () {
+            $("#navigacioni-meni").load("/Static/NavigacioniMeni.html");
+
+            const params = new URLSearchParams(window.location.search);
+            const aranzmanId = params.get("id");
+            if (!aranzmanId) { alert("Nije prosleđen ID aranžmana"); return; }
+
+            let prijavljenKorisnik = null;
+            let smestajJedinice = [];
+
+            function ucitajDetalje() {
+                // Provera sesije
+                $.ajax({
+                    url: "http://localhost:51858/api/identity/sesija",
+                    type: "GET",
+                    async: false,
+                    success: function (res) {
+                        if (res && res.data) prijavljenKorisnik = res.data;
+                    }
+                });
+
+                // Dohvati detalje aranžmana
+                $.ajax({
+                    url: `http://localhost:51858/api/aranzmani/get/${aranzmanId}`,
+                    method: "GET",
+                    success: function (response) {
+                        const a = response.data;
+
+                        $("#naziv").text(a.Naziv);
+                        $("#tipAranzmana").text(a.TipAranzmana);
+                        $("#tipPrevoza").text(a.TipPrevoza);
+                        $("#lokacija").text(a.Lokacija || "-");
+                        $("#datum").text(`${formatDatum(a.DatumPocetka)} - ${formatDatum(a.DatumZavrsetka)}`);
+                        $("#maksPutnika").text(a.MaksimalanBrojPutnika);
+                        $("#opis").text(a.Opis || "-");
+                        $("#program").text(a.ProgramPutovanja || "-");
+                        if (a.PosterAranzmana) $("#poster").attr("src", a.PosterAranzmana);
+
+                        if (!a.Smestaj) return;
+                        $("#smestajNaziv").text(a.Smestaj.Naziv);
+                        $("#smestajTip").text(a.Smestaj.Tip);
+                        $("#smestajZvezdice").text(a.Smestaj.BrojZvezdica);
+                        $("#smestajInfo").show();
+
+                        // Popuni smestajJedinice
+                        smestajJedinice = a.Smestaj.SmestajneJedinice.map(jid => {
+                            return {
+                                Id: jid.Id,
+                                DozvoljenBrojGostiju: jid.DozvoljenBrojGostiju,
+                                DozvoljenBoravakKucnimLjubimcima: jid.DozvoljenBoravakKucnimLjubimcima,
+                                Cena: jid.Cena,
+                                SlobodnaMesta: jid.DozvoljenBrojGostiju // primer, uzmi iz baze ako postoji
+                            };
+                        });
+
+                        prikaziJedinice(smestajJedinice);
+
+                    },
+                    error: function () { alert("Greška pri učitavanju detalja aranžmana"); }
+                });
+            }
+
+            function prikaziJedinice(lista) {
+                const container = $("#smestajJedinice");
+                container.empty();
+
+                lista.forEach(j => {
+                    const slobodna = j.SlobodnaMesta > 0;
+                    const prikaziDugme = prijavljenKorisnik && prijavljenKorisnik.TipKorisnika === "TURISTA" && slobodna;
+
+                    const elem = $(`
+                             <div class="relative border rounded-lg shadow p-4 mb-4 bg-white flex flex-col lg:flex-row justify-between items-start">
+                                 <!-- Status bedž u gornjem desnom uglu -->
+                                 <span class="absolute top-2 right-2 px-2 py-1 rounded text-white font-semibold ${slobodna ? 'bg-blue-500' : 'bg-red-500'}">
+                                     ${slobodna ? 'Slobodna' : 'Popunjena'}
+                                 </span>
+
+                                 <div class="mb-2 lg:mb-0">
+                                     <p><b>Kreveti:</b> ${j.DozvoljenBrojGostiju ?? "Nema mesta"}</p>
+                                     <p><b>Cena:</b> ${j.Cena} RSD</p>
+                                     <p><b>Dozvoljen boravak kućnim ljubimcima:</b> ${j.DozvoljenBoravakKucnimLjubimcima ? 'Da' : 'Ne'}</p>
+                                 </div>
+
+                                 <button class="rezervisiBtn px-3 py-1.5 bg-green-500 text-white rounded hover:bg-green-600 mt-10"
+                                         ${prikaziDugme ? '' : 'disabled hidden'}
+                                         data-jedinica-id="${j.Id}">
+                                     Rezerviši
+                                 </button>
+                             </div>
+                     `);
+                    container.append(elem);
+                });
+            }
+        });
+    </script>
+</head>
+<body class="bg-gray-50">
+
+    <div id="navigacioni-meni" class="w-full mb-6"></div>
+
+    <div class="p-8 max-w-6xl mx-auto">
+        <h1 class="text-3xl font-bold mb-6 ml-12" id="naziv">Detalji aranžmana</h1>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+            <div class="flex justify-center">
+                <img id="poster" class="rounded-lg shadow w-full lg:w-4/5" src="" alt="Poster aranžmana" />
+            </div>
+            <div class="space-y-2 bg-white p-4 px-8 rounded-lg shadow">
+                <p><b>Tip aranžmana:</b> <span id="tipAranzmana"></span></p>
+                <p><b>Tip prevoza:</b> <span id="tipPrevoza"></span></p>
+                <p><b>Lokacija:</b> <span id="lokacija"></span></p>
+                <p><b>Datum putovanja:</b> <span id="datum"></span></p>
+                <p><b>Maksimalan broj putnika:</b> <span id="maksPutnika"></span></p>
+                <p><b>Opis:</b> <span id="opis"></span></p>
+                <p><b>Program putovanja:</b> <span id="program"></span></p>
+            </div>
+        </div>
+
+        <div id="smestajInfo" class="mb-6 ml-12" style="display:none;">
+            <h2 class="text-2xl font-semibold mb-4">Smeštaj: <span id="smestajNaziv"></span></h2>
+
+            <div class="mb-4 p-4 bg-gray-100 rounded">
+                <h3 class="font-semibold mb-2">Filteri jedinica</h3>
+                <input type="number" id="filterMinGostiju" placeholder="Min broj gostiju" class="border p-1 rounded mr-2" />
+                <input type="number" id="filterMaxGostiju" placeholder="Max broj gostiju" class="border p-1 rounded mr-2" />
+                <select id="filterKucniLjubimci" class="border p-1 rounded mr-2">
+                    <option value="">Dozvoljeni kućni ljubimci</option>
+                    <option value="true">Da</option>
+                    <option value="false">Ne</option>
+                </select>
+                <input type="number" id="filterCena" placeholder="Cena max" class="border p-1 rounded mr-2" />
+
+                <select id="sortJedinice" class="border p-1 rounded mt-2">
+                    <option value="">Sortiraj jedinice</option>
+                    <option value="brojRastuće">Broj gostiju (rastuće)</option>
+                    <option value="brojOpadajuće">Broj gostiju (opadajuće)</option>
+                    <option value="cenaRastuće">Cena (rastuće)</option>
+                    <option value="cenaOpadajuće">Cena (opadajuće)</option>
+                </select>
+            </div>
+
+            <div id="smestajJedinice" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+
+            <h3 class="text-xl font-semibold mt-6 mb-2">Komentari</h3>
+            <div id="komentariContainer"></div>
+        </div>
+    </div>
+</body>
+</html>
