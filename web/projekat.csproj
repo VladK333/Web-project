@@ -192,6 +192,7 @@
     <Content Include="Static\Prijava.html" />
     <Content Include="Static\Profil.html" />
     <Content Include="Static\Registracija.html" />
+    <Content Include="Static\RezervacijeTuristaTabela.html" />
     <Content Include="Static\SmestajiTabela.html" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">

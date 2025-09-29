@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Menadžer | Aranžmani</title>
+    <link href="../Content/tailwind.css" rel="stylesheet">
+    <script src="../Scripts/jquery-3.7.1.min.js"></script>
+    <style>
+        /* male sitnice za preview slike */
+        #previewImg {
+            max-width: 200px;
+            max-height: 160px;
+            display: block;
+            margin-top: 8px;
+            border-radius: 6px;
+        }
+    </style>
+</head>
+<body class="p-8">
+    <h1 class="text-3xl font-bold mb-6">Moji aranžmani</h1>
+
+    <div class="flex gap-2 mb-4">
+        <input type="text" id="pretragaNaziv" placeholder="Pretraga po nazivu"
+               class="border border-blue-500 rounded px-3 py-1 focus:outline-none focus:border-blue-600">
+        <select id="pretragaTip" class="border border-blue-500 rounded px-3 py-1 focus:outline-none focus:border-blue-600">
+            <option value="">Svi tipovi aranžmana</option>
+            <option value="0">Noćenje sa doručkom</option>
+            <option value="1">Polupansion</option>
+            <option value="2">Pun pansion</option>
+            <option value="3">All inclusive</option>
+            <option value="4">Najam apartmana</option>
+        </select>
+        <button id="dugmeFiltriraj" class="bg-blue-500 text-white px-4 py-1 rounded hover:bg-blue-600">Filtriraj</button>
+        <input type="reset" id="dugmeResetuj" class="bg-red-500 text-white px-4 py-1 rounded hover:bg-red-600" value="Resetuj">
+        <button id="dugmeDodaj" class="bg-green-500 text-white px-4 py-1 rounded hover:bg-green-600">Dodaj aranžman</button>
+    </div>
+
+    <table id="tabelaAranzmana" class="w-full text-center border rounded-lg overflow-hidden">
+        <thead class="bg-blue-400 text-gray-700 uppercase">
+            <tr>
+                <th class="px-4 py-2">Naziv</th>
+                <th class="px-4 py-2">Tip aranžmana</th>
+                <th class="px-4 py-2">Tip prevoza</th>
+                <th class="px-4 py-2">Datum početka</th>
+                <th class="px-4 py-2">Datum završetka</th>
+                <th class="px-4 py-2">Maks putnika</th>
+                <th class="px-4 py-2">Smestaj</th>
+                <th class="px-4 py-2">Akcije</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <!-- Modal -->
+    <div id="modalAranzman" class="fixed z-10 inset-0 overflow-y-auto" style="display:none;">
+        <div class="flex items-end justify-center min-h-screen px-4 pb-20 text-center sm:block sm:p-0">
+            <div class="fixed inset-0 transition-opacity" aria-hidden="true">
+                <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
+            </div>
+            <span class="hidden sm:inline-block sm:align-middle sm:h-screen">&#8203;</span>
+
+            <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-3xl sm:w-full p-4">
+                <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4" id="naslovModala">Dodaj Aranžman</h3>
+                <input type="hidden" id="idAranzmana">
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-sm">Naziv</label>
+                        <input id="naziv" type="text" class="w-full border rounded px-3 py-2" />
+                    </div>
+
+                    <div>
+                        <label class="block text-sm">Smestaj (odaberi)</label>
+                        <select id="smestajId" class="w-full border rounded px-3 py-2">
+                            <option value="">Odaberi smeštaj</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm">Tip aranžmana</label>
+                        <select id="tipAranzmana" class="w-full border rounded px-3 py-2">
+                            <option value="">Odaberi tip</option>
+                            <option value="0">Noćenje sa doručkom</option>
+                            <option value="1">Polupansion</option>
+                            <option value="2">Pun pansion</option>
+                            <option value="3">All inclusive</option>
+                            <option value="4">Najam apartmana</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm">Tip prevoza</label>
+                        <select id="tipPrevoza" class="w-full border rounded px-3 py-2">
+                            <option value="">Odaberi tip prevoza</option>
+                            <option value="0">Autobus</option>
+                            <option value="1">Avion</option>
+                            <option value="2">Autobus+Avion</option>
+                            <option value="3">Individualan</option>
+                            <option value="4">Ostalo</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm">Datum početka</label>
+                        <input id="datumPocetka" type="date" class="w-full border rounded px-3 py-2" />
+                    </div>
+
+                    <div>
+                        <label class="block text-sm">Datum završetka</label>
+                        <input id="datumZavrsetka" type="date" class="w-full border rounded px-3 py-2" />
+                    </div>
+
+                    <div>
+                        <label class="block text-sm">Maksimalan broj putnika</label>
+                        <input id="maksPutnika" type="number" min="1" class="w-full border rounded px-3 py-2" />
+                    </div>
+
+                    <div>
+                        <label class="block text-sm">Lokacija</label>
+                        <input id="lokacija" type="text" class="w-full border rounded px-3 py-2" />
+                    </div>
+
+                    <div class="col-span-1 md:col-span-2">
+                        <label class="block text-sm">Kratak opis</label>
+                        <textarea id="opis" class="w-full border rounded px-3 py-2" rows="3"></textarea>
+                    </div>
+
+                    <div class="col-span-1 md:col-span-2">
+                        <label class="block text-sm">Program putovanja</label>
+                        <textarea id="program" class="w-full border rounded px-3 py-2" rows="4"></textarea>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm">Poster (jpg/png) — kompresuje se i šalje kao base64</label>
+                        <input id="posterFile" type="file" accept="image/*" class="w-full" />
+                        <img id="previewImg" src="" alt="preview" style="display:none;" />
+                        <div class="text-xs text-gray-500 mt-1">Ako ne odaberete novu sliku pri izmeni, biće sačuvana postojeća.</div>
+                    </div>
+                </div>
+
+                <div class="mt-4 flex justify-end gap-2">
+                    <button id="dugmeSacuvaj" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">Sačuvaj</button>
+                    <button id="dugmeOtkazi" class="bg-gray-300 px-4 py-2 rounded hover:bg-gray-400">Otkaži</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    
+</body>
+</html>

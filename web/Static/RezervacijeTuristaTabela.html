@@ -37,5 +37,91 @@
         </thead>
         <tbody></tbody>
     </table>
+
+    <!-- Modal za detalje rezervacije i komentare -->
+    <div id="modalDetalji" class="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center hidden">
+        <div class="bg-white p-6 rounded-lg w-1/2 relative">
+            <h2 class="text-xl font-bold mb-4" id="modalNaslov"></h2>
+            <div id="modalSadrzaj"></div>
+
+            <div id="formaKomentar" class="mt-4">
+                <h3 class="font-semibold mb-2">Ostavi komentar:</h3>
+                <textarea id="komentarTekst" class="border rounded w-full p-2 mb-2" rows="3" placeholder="Vaš komentar"></textarea>
+                <input type="number" id="komentarOcena" min="1" max="5" placeholder="Ocena (1-5)" class="border rounded px-2 py-1 mb-2 w-20">
+                <br>
+                <button id="btnDodajKomentar" class="bg-green-500 text-white px-4 py-1 rounded">Dodaj komentar</button>
+            </div>
+
+            <button id="btnZatvoriModal" class="bg-gray-300 px-4 py-2 rounded mt-4 absolute right-4 top-4">Zatvori</button>
+        </div>
+    </div>
+
+    <script>
+        $(function () {
+            let rezervacijeData = [];
+
+            function ucitajRezervacije() {
+                $.get("/api/rezervacije/mojerezervacije").done(function (resp) {
+                    rezervacijeData = resp.data;
+                    prikaziRezervacije(rezervacijeData);
+                });
+            }
+
+            function prikaziRezervacije(data) {
+                const tbody = $("#tabelaRezervacija tbody").empty();
+                const danas = new Date();
+                data.forEach(r => {
+                    const datumPocetka = r.Aranzman?.DatumPocetka && new Date(r.Aranzman.DatumPocetka.split('/').reverse().join('-'));
+                    const datumZavrsetka = new Date(r.Aranzman?.DatumZavrsetka);
+                    tbody.append(`
+                                <tr data-id="${r.Rezervacija.Id}">
+                                    <td>${r.Rezervacija.Id}</td>
+                                    <td>${r.Aranzman?.Naziv || ''}</td>
+                                    <td>${r.Rezervacija.Status}</td>
+                                    <td>${r.Aranzman?.DatumPocetka || ''}</td>
+                                    <td>${r.Aranzman?.DatumZavrsetka || ''}</td>
+                                    <td>${r.Jedinica?.Id || ''}</td>
+                                    <td>
+                                        ${r.Rezervacija.Status === "AKTIVNA" && datumPocetka > danas
+                            ? `<button class="otkazi bg-red-500 text-white px-2 py-1 rounded" data-id="${r.Rezervacija.Id}">Otkaži</button>` : ""}
+                                        <button class="detalji bg-blue-500 text-white px-2 py-1 rounded" data-id="${r.Rezervacija.Id}">Detalji</button>
+                                        ${datumZavrsetka < danas
+                            ? `<button class="komentar bg-green-500 text-white px-2 py-1 rounded" data-id="${r.Rezervacija.Id}" data-smestaj="${r.Smestaj?.Id}">Ostavi komentar</button>` : ""}
+                                    </td>
+                                </tr>
+                            `);
+                });
+            }
+
+            // Filter po ID, nazivu, statusu
+            $("#btnPretrazi").on("click", function () {
+                const id = $("#filterId").val().toLowerCase();
+                const naziv = $("#filterNaziv").val().toLowerCase();
+                const status = $("#filterStatus").val();
+                const filtrirano = rezervacijeData.filter(r =>
+                    (!id || r.Rezervacija.Id.toString().includes(id)) &&
+                    (!naziv || (r.Aranzman?.Naziv || '').toLowerCase().includes(naziv)) &&
+                    (!status || r.Rezervacija.Status === status)
+                );
+                prikaziRezervacije(filtrirano);
+            });
+
+            // Otkaz rezervacije
+            $("#tabelaRezervacija").on("click", ".otkazi", function () {
+                if (!confirm("Da li ste sigurni da želite otkazati rezervaciju?")) return;
+                const id = $(this).data("id");
+                $.ajax({
+                    url: "/api/rezervacije/otkazi",
+                    method: "POST",
+                    contentType: "application/json",
+                    data: JSON.stringify(id)
+                }).done(ucitajRezervacije)
+                    .fail(err => alert("Greška pri otkazivanju"));
+            });
+
+            
+        });
+    </script>
+
 </body>
 </html>
