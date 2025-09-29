@@ -175,5 +175,212 @@
         </div>
     </div>
 
+    <script>
+        $(function () {
+
+            // pregled rezervacija
+            $('#tabelaAranzmana').on('click', '.dugmePregledRez', function () {
+                const aranzmanId = $(this).data('id');
+                const naziv = $(this).closest('tr').find('td:eq(0)').text();
+                $('#nazivAranzmanaRez').text(naziv);
+
+                const tbody = $('#tabelaRezervacija tbody').empty();
+
+                $.get(`http://localhost:51858/api/rezervacije/aranzman/${aranzmanId}`)
+                    .done(resp => {
+                        if (resp && resp.data && resp.data.length) {
+                            resp.data.forEach(r => {
+                                tbody.append(`
+                            <tr>
+                                <td>${r.ImeKlijenta}</td>
+                                <td>${r.Email}</td>
+                                <td>${r.BrojPutnika}</td>
+                                <td>${r.DatumRezervacije}</td>
+                                <td>${r.Napomene}</td>
+                            </tr>
+                        `);
+                            });
+                        } else {
+                            tbody.append('<tr><td colspan="5">Nema rezervacija za ovaj aranžman</td></tr>');
+                        }
+                        $('#modalRezervacije').show();
+                    })
+                    .fail(() => alert('Greška pri dohvaćanju rezervacija'));
+            });
+
+            // zatvori modal
+            $('#dugmeZatvoriRez').on('click', function () { $('#modalRezervacije').hide(); });
+
+
+            // globalna var za poster base64
+            let currentPosterBase64 = null;
+            let isSaving = false;
+
+            // pomoćne funkcije za datume
+            function ddmmyyyyToIso(ddmm) {
+                if (!ddmm) return '';
+                const parts = ddmm.split('/');
+                if (parts.length !== 3) return '';
+                // dd/mm/yyyy -> yyyy-mm-dd
+                return `${parts[2]}-${parts[1].padStart(2, '0')}-${parts[0].padStart(2, '0')}`;
+            }
+            function isoToDdMmYyyy(iso) {
+                if (!iso) return '';
+                // iso may be "yyyy-mm-dd" or full datetime; take first 10 chars
+                const d = iso.substring(0, 10);
+                if (!d) return '';
+                const p = d.split('-');
+                if (p.length !== 3) return '';
+                return `${p[2]}/${p[1]}/${p[0]}`;
+            }
+
+            // Parse enum value robustno: prihvati broj ili string
+            function parseEnumValue(val, mapping) {
+                if (val === null || val === undefined) return null;
+                if (typeof val === 'number') return val;
+                if (/^\d+$/.test(val)) return parseInt(val);
+                // else try mapping from string names -> number
+                if (mapping && mapping[val] !== undefined) return mapping[val];
+                // fallback: try parseInt
+                const n = parseInt(val);
+                return isNaN(n) ? null : n;
+            }
+
+            const TipMap = {
+                "NocenjeSDoruckom": 0, "Noćenje sa doručkom": 0, "0": 0, 0: 0,
+                "Polupansion": 1, "1": 1, 1: 1,
+                "PunPansion": 2, "Pun pansion": 2, "2": 2, 2: 2,
+                "AllInclusive": 3, "All inclusive": 3, "3": 3, 3: 3,
+                "NajamApartmana": 4, "Najam apartmana": 4, "4": 4, 4: 4
+            };
+            const PrevozMap = {
+                "Autobus": 0, "0": 0, 0: 0,
+                "Avion": 1, "1": 1, 1: 1,
+                "AutobusAvion": 2, "Autobus+Avion": 2, "2": 2, 2: 2,
+                "Individualan": 3, "3": 3, 3: 3,
+                "Ostalo": 4, "4": 4, 4: 4
+            };
+
+            // prikaz liste
+            function prikaziAranzmane(aranzmani) {
+                const tbody = $('#tabelaAranzmana tbody').empty();
+                aranzmani.forEach(a => {
+                    // a may contain TipAranzmana and TipPrevoza as strings or numbers
+                    const tip = typeof a.TipAranzmana === 'string' ? a.TipAranzmana : Object.keys(TipMap).find(k => TipMap[k] === a.TipAranzmana) || a.TipAranzmana;
+                    const prevoz = typeof a.TipPrevoza === 'string' ? a.TipPrevoza : Object.keys(PrevozMap).find(k => PrevozMap[k] === a.TipPrevoza) || a.TipPrevoza;
+                    const row = $(`
+<tr>
+        <td>${a.Naziv || ''}</td>
+        <td>${tip}</td>
+        <td>${prevoz}</td>
+        <td>${a.DatumPocetka ? a.DatumPocetka.substring(0, 10) : ''}</td>
+        <td>${a.DatumZavrsetka ? a.DatumZavrsetka.substring(0, 10) : ''}</td>
+        <td>${a.MaksPutnika || a.MaksimalanBrojPutnika || 0}</td>
+        <td>${a.SmestajNaziv || (a.SmestajId || '')}</td>
+        <td>
+            <button class="dugmeUredi bg-blue-500 text-white px-3 py-1 rounded mr-2" data-id="${a.Id}" ${!a.MozeUrediti ? 'disabled title="Samo kreator može menjati"' : ''}>Uredi</button>
+            <button class="dugmeObrisi bg-red-500 text-white px-3 py-1 rounded mr-2" data-id="${a.Id}" ${!a.MozeUrediti ? 'disabled title="Samo kreator može brisati"' : ''}>Obriši</button>
+            <button class="dugmePregledRez bg-green-600 text-white px-3 py-1 rounded" data-id="${a.Id}" data-naziv="${a.Id}">Pregled rezervacija</button>
+        </td>
+</tr>
+`);
+                    tbody.append(row);
+                });
+            }
+
+            // dohvat aranžmana za menadžera
+            function dohvatiAranzmane() {
+                $.get('http://localhost:51858/api/aranzmani/menadzer')
+                    .done(resp => {
+                        if (resp && resp.data) prikaziAranzmane(resp.data);
+                    })
+                    .fail(() => console.error('Greška pri dohvaćanju aranžmana'));
+            }
+
+            // dohvat slobodnih smeštaja + dodaj trenutni ako nije slobodan
+            function dohvatiDostupneSmestaje(odabraniId) {
+                const select = $('#smestajId');
+                select.empty().append('<option value="">Odaberi smeštaj</option>');
+
+                $.get('http://localhost:51858/api/smestaji/slobodni')
+                    .done(resp => {
+                        const present = new Set();
+                        if (resp && resp.data) {
+                            resp.data.forEach(s => {
+                                select.append(`<option value="${s.Id}">${s.Naziv} (${s.Tip})</option>`);
+                                present.add(String(s.Id));
+                            });
+                        }
+                        // ako imamo odabrani smestaj i nije u listi, dohvatimo ga pojedinačno
+                        if (odabraniId) {
+                            if (!present.has(String(odabraniId))) {
+                                $.get(`http://localhost:51858/api/smestaji/get/${odabraniId}`)
+                                    .done(r => {
+                                        if (r && r.data) {
+                                            const s = r.data;
+                                            const tip = (typeof s.Tip === 'string') ? s.Tip : (s.Tip === 0 ? 'Hotel' : s.Tip === 1 ? 'Motel' : 'Vila');
+                                            select.append(`<option value="${s.Id}" selected>${s.Naziv} (${tip})</option>`);
+                                        }
+                                    })
+                                    .fail(() => {/* ignore */ });
+                            } else {
+                                select.val(odabraniId);
+                            }
+                        }
+                    })
+                    .fail(() => {
+                        console.error('Ne mogu dohvatiti slobodne smeštaje');
+                    });
+            }
+
+            // Helper: compress image to jpeg base64 (quality ~0.3)
+            function compressFileToBase64(file, maxWidth = 1200, quality = 0.3, callback) {
+                const reader = new FileReader();
+                reader.onload = function (ev) {
+                    const img = new Image();
+                    img.onload = function () {
+                        // scale to maxWidth preserving aspect ratio
+                        let w = img.width, h = img.height;
+                        if (w > maxWidth) {
+                            const ratio = maxWidth / w;
+                            w = Math.round(w * ratio);
+                            h = Math.round(h * ratio);
+                        }
+                        const canvas = document.createElement('canvas');
+                        canvas.width = w;
+                        canvas.height = h;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, w, h);
+                        // convert to jpeg with provided quality
+                        try {
+                            const dataUrl = canvas.toDataURL('image/jpeg', quality);
+                            callback(null, dataUrl);
+                        } catch (e) {
+                            callback(e);
+                        }
+                    };
+                    img.onerror = function (e) { callback(e || new Error('Image load error')); };
+                    img.src = ev.target.result;
+                };
+                reader.onerror = function (e) { callback(e || new Error('File read error')); };
+                reader.readAsDataURL(file);
+            }
+
+            // file input change
+            $('#posterFile').on('change', function (e) {
+                const f = this.files && this.files[0];
+                if (!f) return;
+                // compress & set global
+                compressFileToBase64(f, 1200, 0.3, function (err, base64) {
+                    if (err) { alert('Greška pri obradi slike'); console.error(err); return; }
+                    currentPosterBase64 = base64; // kompletan dataURL
+                    $('#previewImg').attr('src', base64).show();
+                });
+            });
+
+            // init
+            dohvatiAranzmane();
+        });
+    </script>
 </body>
 </html>
