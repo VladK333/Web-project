@@ -181,6 +181,7 @@
     <Content Include="Scripts\jquery-3.7.1.slim.js" />
     <Content Include="Scripts\jquery-3.7.1.slim.min.js" />
     <Content Include="Scripts\modernizr-2.8.3.js" />
+    <Content Include="Static\AranzmaniMenadzerTabela.html" />
     <Content Include="Static\DetaljiAranzmana.html" />
     <Content Include="Static\images\login.jpg" />
     <Content Include="Static\images\profile.jpg" />

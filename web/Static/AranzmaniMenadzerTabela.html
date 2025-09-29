@@ -515,6 +515,38 @@
                 });
             });
 
+            // filtriranje UI
+            $('#dugmeFiltriraj').on('click', function () {
+                const nazivFilter = $('#pretragaNaziv').val().toLowerCase();
+                const tipFilter = $('#pretragaTip').val();
+                $('#tabelaAranzmana tbody tr').each(function () {
+                    const naziv = $(this).find('td:eq(0)').text().toLowerCase();
+                    const tip = $(this).find('td:eq(1)').text();
+                    const prikazi = (!nazivFilter || naziv.includes(nazivFilter)) && (!tipFilter || tip === $('#pretragaTip option:selected').text());
+                    $(this).toggle(prikazi);
+                });
+            });
+
+            // reset UI
+            $('#dugmeResetuj').on('click', function () { $('#pretragaNaziv, #pretragaTip').val(''); $('#tabelaAranzmana tbody tr').show(); });
+
+            // reset forme helper
+            function resetForm() {
+                $('#idAranzmana').val('');
+                $('#naziv').val('');
+                $('#tipAranzmana').val('');
+                $('#tipPrevoza').val('');
+                $('#datumPocetka').val('');
+                $('#datumZavrsetka').val('');
+                $('#maksPutnika').val('');
+                $('#lokacija').val('');
+                $('#opis').val('');
+                $('#program').val('');
+                $('#smestajId').val('');
+                $('#posterFile').val('');
+                currentPosterBase64 = null;
+                $('#previewImg').hide().attr('src', '');
+            }
            
             // init
             dohvatiAranzmane();
