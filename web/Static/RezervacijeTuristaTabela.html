@@ -118,8 +118,85 @@
                 }).done(ucitajRezervacije)
                     .fail(err => alert("Greška pri otkazivanju"));
             });
+            // Prikaz detalja i forma za komentar
+            $("#tabelaRezervacija").on("click", ".detalji, .komentar", function () {
+                const id = $(this).data("id");
+                const rezervacija = rezervacijeData.find(r => r.Rezervacija.Id == id);
+                if (!rezervacija) return;
 
-            
+                $("#modalNaslov").text(`Rezervacija ${id}`);
+
+                // Podaci o aranžmanu
+                const aranzman = rezervacija.Aranzman;
+                const smestaj = rezervacija.Smestaj;
+                const jedinica = rezervacija.Jedinica;
+
+                let html = `
+    <p><center><img id="poster" class="rounded-lg shadow w-full lg:w-2/5" src="${aranzman?.PosterAranzmana}" alt="Poster aranžmana" /></center></p>
+    <p><strong>Naziv aranžmana:</strong> ${aranzman?.Naziv || ''}</p>
+    <p><strong>Status:</strong> ${rezervacija.Rezervacija.Status}</p>
+    <p><strong>Polazak:</strong> ${aranzman?.DatumPocetka}</p>
+    <p><strong>Dolazak:</strong> ${aranzman?.DatumZavrsetka}</p>
+    <hr class="my-2">
+    <h4 class="font-semibold">Podaci o smeštaju:</h4>
+    <p><strong>Naziv:</strong> ${smestaj?.Naziv || ''}</p>
+    <p><strong>Tip:</strong> ${smestaj?.Tip || ''}</p>
+    <p><strong>Broj zvezdica:</strong> ${smestaj?.BrojZvezdica || ''}</p>
+    <p><strong>Bazen:</strong> ${smestaj?.ImaBazen ? 'Da' : 'Ne'}</p>
+    <p><strong>SPA centar:</strong> ${smestaj?.ImaSpaCentar ? 'Da' : 'Ne'}</p>
+    <p><strong>WiFi:</strong> ${smestaj?.ImaWifi ? 'Da' : 'Ne'}</p>
+    <p><strong>Prilagođeno za invalide:</strong> ${smestaj?.PrilagodjenoZaInvaliditet ? 'Da' : 'Ne'}</p>
+    <hr class="my-2">
+    <h4 class="font-semibold">Podaci o smeštajnoj jedinici:</h4>
+    <p><strong>Broj kreveta:</strong> ${jedinica?.BrojKreveta || ''}</p>
+    <p><strong>Cena:</strong> ${jedinica?.Cena || ''}</p>
+    <p><strong>Dozvoljen boravak kućnim ljubimcima:</strong> ${jedinica?.DozvoljenBoravakKucnimLjubimcima ? 'Da' : 'Ne'}</p>
+`;
+
+                $("#modalSadrzaj").html(html);
+
+                // Priprema forme za komentar samo ako aranžman je prošao
+                const rezervacijaId = rezervacija.Rezervacija.Id;
+                const smestajId = smestaj?.Id;
+
+                const danas = new Date();
+                if (aranzman?.DatumZavrsetka && new Date(aranzman.DatumZavrsetka) < danas) {
+                    $("#formaKomentar").show();
+                    $("#komentarTekst, #komentarOcena").val("");
+                    $("#btnDodajKomentar").off("click").on("click", function () {
+                        const tekst = $("#komentarTekst").val();
+                        const ocena = parseInt($("#komentarOcena").val());
+                        if (!tekst || !ocena) { alert("Popunite tekst i ocenu"); return; }
+
+                        $.ajax({
+                            url: "/api/komentari/dodaj",
+                            method: "POST",
+                            contentType: "application/json",
+                            data: JSON.stringify({ SmestajId: smestajId, RezervacijaId: rezervacijaId, Tekst: tekst, Ocena: ocena })
+                        }).done(function () {
+                            alert("Komentar dodat!");
+                            $("#formaKomentar").hide();
+                        }).fail(err => alert("Greška pri dodavanju komentara"));
+                    });
+
+                    // Provera da li komentar već postoji za ovu rezervaciju
+                    $.get("/api/komentari/moji").done(function (resp) {
+                        const postoji = resp.data.some(k => k.Komentar.RezervacijaId == rezervacijaId);
+                        if (postoji) {
+                            $("#formaKomentar").hide();
+                        }
+                    });
+                } else {
+                    $("#formaKomentar").hide();
+                }
+
+                $("#modalDetalji").removeClass("hidden");
+            });
+
+
+            $("#btnZatvoriModal").on("click", () => $("#modalDetalji").addClass("hidden"));
+
+            ucitajRezervacije();
         });
     </script>
 
