@@ -378,6 +378,144 @@
                 });
             });
 
+            // Otvori modal za dodavanje
+            $('#dugmeDodaj').on('click', function () {
+                resetForm();
+                $('#naslovModala').text('Dodaj Aranžman');
+                dohvatiDostupneSmestaje(); // slobodni
+                $('#modalAranzman').show();
+            });
+
+            // Otkaži
+            $('#dugmeOtkazi').on('click', function () { $('#modalAranzman').hide(); });
+
+            // Save (dodaj/izmeni)
+            $('#dugmeSacuvaj').on('click', function () {
+                if (isSaving) return;
+                // validacija minimalna
+                const naziv = $('#naziv').val().trim();
+                if (!naziv) { alert('Naziv je obavezan'); return; }
+                const tipA = parseEnumValue($('#tipAranzmana').val(), TipMap);
+                const tipP = parseEnumValue($('#tipPrevoza').val(), PrevozMap);
+                if (tipA === null || tipP === null) { alert('Izaberite tip aranžmana i tip prevoza'); return; }
+                const smId = parseInt($('#smestajId').val()) || null;
+                if (!smId) { alert('Izaberite smeštaj'); return; }
+
+                const datumP = $('#datumPocetka').val();
+                const datumZ = $('#datumZavrsetka').val();
+                if (!datumP || !datumZ) { alert('Unesite datume'); return; }
+
+                const payload = {
+                    Naziv: naziv,
+                    TipAranzmana: tipA,
+                    TipPrevoza: tipP,
+                    Lokacija: $('#lokacija').val() || '',
+                    DatumPocetka: isoToDdMmYyyy(datumP), // dd/MM/yyyy
+                    DatumZavrsetka: isoToDdMmYyyy(datumZ),
+                    MaksimalanBrojPutnika: parseInt($('#maksPutnika').val()) || 0,
+                    Opis: $('#opis').val() || '',
+                    ProgramPutovanja: $('#program').val() || '',
+                    PosterAranzmana: currentPosterBase64 || null,
+                    SmestajId: smId
+                };
+
+                const id = $('#idAranzmana').val();
+                isSaving = true;
+                $('#dugmeSacuvaj').prop('disabled', true);
+
+                if (id) {
+                    payload.Id = parseInt(id);
+                    $.ajax({
+                        url: 'http://localhost:51858/api/aranzmani/update',
+                        method: 'PATCH',
+                        contentType: 'application/json',
+                        data: JSON.stringify(payload)
+                    }).done(function () {
+                        $('#modalAranzman').hide();
+                        dohvatiAranzmane();
+                    }).fail(function (xhr) {
+                        alert('Greška pri izmeni: ' + (xhr.responseJSON?.message || xhr.statusText));
+                    }).always(function () { isSaving = false; $('#dugmeSacuvaj').prop('disabled', false); });
+                } else {
+                    $.ajax({
+                        url: 'http://localhost:51858/api/aranzmani/dodaj',
+                        method: 'POST',
+                        contentType: 'application/json',
+                        data: JSON.stringify(payload)
+                    }).done(function () {
+                        $('#modalAranzman').hide();
+                        dohvatiAranzmane();
+                    }).fail(function (xhr) {
+                        alert('Greška pri dodavanju: ' + (xhr.responseJSON?.message || xhr.statusText));
+                    }).always(function () { isSaving = false; $('#dugmeSacuvaj').prop('disabled', false); });
+                }
+            });
+
+            // Edit: učitaj aranzman i popuni formu
+            $('#tabelaAranzmana').on('click', '.dugmeUredi', function () {
+                const id = $(this).data('id');
+                $.get(`http://localhost:51858/api/aranzmani/get/${id}`)
+                    .done(function (resp) {
+                        if (!resp || !resp.data) { alert('Nije pronađen aranžman'); return; }
+                        const a = resp.data;
+                        $('#idAranzmana').val(a.Id);
+                        $('#naziv').val(a.Naziv || '');
+                        // popuni tipovi (može doći kao broj ili string)
+                        const tipA = parseEnumValue(a.TipAranzmana, TipMap);
+                        if (tipA !== null) $('#tipAranzmana').val(tipA);
+                        const tipP = parseEnumValue(a.TipPrevoza, PrevozMap);
+                        if (tipP !== null) $('#tipPrevoza').val(tipP);
+
+                        // datum: server čuva dd/MM/yyyy - convert to iso yyyy-mm-dd for input
+                        if (a.DatumPocetka) {
+                            // ako je dd/mm/yyyy
+                            if (a.DatumPocetka.indexOf('/') >= 0) $('#datumPocetka').val(ddmmyyyyToIso(a.DatumPocetka));
+                            else $('#datumPocetka').val(a.DatumPocetka.substring(0, 10));
+                        } else $('#datumPocetka').val('');
+
+                        if (a.DatumZavrsetka) {
+                            if (a.DatumZavrsetka.indexOf('/') >= 0) $('#datumZavrsetka').val(ddmmyyyyToIso(a.DatumZavrsetka));
+                            else $('#datumZavrsetka').val(a.DatumZavrsetka.substring(0, 10));
+                        } else $('#datumZavrsetka').val('');
+
+                        $('#maksPutnika').val(a.MaksimalanBrojPutnika || a.MaksPutnika || 0);
+                        $('#lokacija').val(a.Lokacija || '');
+                        $('#opis').val(a.Opis || '');
+                        $('#program').val(a.ProgramPutovanja || '');
+
+                        // poster: ako postoji, popuni preview i currentPosterBase64
+                        if (a.PosterAranzmana) {
+                            currentPosterBase64 = a.PosterAranzmana;
+                            $('#previewImg').attr('src', currentPosterBase64).show();
+                        } else {
+                            currentPosterBase64 = null;
+                            $('#previewImg').hide();
+                        }
+
+                        // smestaj select: load free + ensure current is shown/selected
+                        dohvatiDostupneSmestaje(a.SmestajId);
+
+                        $('#naslovModala').text('Uredi Aranžman');
+                        $('#modalAranzman').show();
+                    })
+                    .fail(function () { alert('Greška pri učitavanju aranžmana'); });
+            });
+
+            // Delete (logičko)
+            $('#tabelaAranzmana').on('click', '.dugmeObrisi', function () {
+                const id = $(this).data('id');
+                if (!confirm('Da li ste sigurni da želite da obrišete ovaj aranžman?')) return;
+                $.ajax({
+                    url: `http://localhost:51858/api/aranzmani/delete/${id}`,
+                    method: 'PATCH'
+                }).done(function () {
+                    dohvatiAranzmane();
+                }).fail(function (xhr) {
+                    alert('Greška pri brisanju: ' + (xhr.responseJSON?.message || xhr.statusText));
+                });
+            });
+
+           
             // init
             dohvatiAranzmane();
         });
