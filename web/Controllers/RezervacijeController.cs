@@ -158,8 +158,7 @@ namespace projekat.Controllers
                         {
                             ImeKlijenta = turista?.Ime + " " + turista?.Prezime,
                             Email = turista?.Email,
-                            BrojPutnika = BazaPodataka.SmestajneJedinice
-                                .FirstOrDefault(j => j.Id == r.SmestajnaJedinicaId)?.DozvoljenBrojGostiju ?? 0,
+                            MaksimalanBrojPutnika = 1,
                             DatumRezervacije = DateTimeOffset.FromUnixTimeSeconds(r.Id).DateTime.ToString("dd/MM/yyyy"),
                             Napomene = r.Status.ToString()
                         };

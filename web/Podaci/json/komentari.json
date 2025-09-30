@@ -1,1 +1,11 @@
-[]
+[
+  {
+    "Id": 1759239852,
+    "TuristaId": 1759237555,
+    "SmestajId": 5,
+    "Tekst": "Super",
+    "Ocena": 4,
+    "RezervacijaId": 1758979259,
+    "Status": 1
+  }
+]

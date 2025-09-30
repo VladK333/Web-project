@@ -189,11 +189,12 @@
                     .done(resp => {
                         if (resp && resp.data && resp.data.length) {
                             resp.data.forEach(r => {
+                                console.log(r);
                                 tbody.append(`
                             <tr>
                                 <td>${r.ImeKlijenta}</td>
                                 <td>${r.Email}</td>
-                                <td>${r.BrojPutnika}</td>
+                                <td>${r.MaksimalanBrojPutnika}</td>
                                 <td>${r.DatumRezervacije}</td>
                                 <td>${r.Napomene}</td>
                             </tr>

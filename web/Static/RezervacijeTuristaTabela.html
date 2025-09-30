@@ -160,7 +160,8 @@
                 const smestajId = smestaj?.Id;
 
                 const danas = new Date();
-                if (aranzman?.DatumZavrsetka && new Date(aranzman.DatumZavrsetka) < danas) {
+                console.log(new Date(aranzman?.DatumZavrsetka.split('/').reverse().join('-')));
+                if (aranzman?.DatumZavrsetka && new Date(aranzman?.DatumZavrsetka.split('/').reverse().join('-')) < danas) {
                     $("#formaKomentar").show();
                     $("#komentarTekst, #komentarOcena").val("");
                     $("#btnDodajKomentar").off("click").on("click", function () {

@@ -187,5 +187,30 @@ namespace projekat.Controllers
             return Ok(new { data = lista });
         }
 
+        [HttpGet]
+        [Route("prethodni")]
+        public IHttpActionResult Prethodni()
+        {
+            var danas = DateTime.Now.Date;
+            var lista = BazaPodataka.Aranzmani
+                .Where(a => !a.IsDeleted && a.DatumPocetka < danas)
+                .Select(a => new
+                {
+                    a.Id,
+                    a.Naziv,
+                    TipAranzmana = a.TipAranzmana.ToString(),
+                    TipPrevoza = a.TipPrevoza.ToString(),
+                    DatumPocetka = a.DatumPocetka.ToString("yyyy-MM-dd"),
+                    DatumZavrsetka = a.DatumZavrsetka.ToString("yyyy-MM-dd"),
+                    a.Lokacija,
+                    MaksPutnika = a.MaksimalanBrojPutnika,
+                    a.PosterAranzmana,
+                    a.SmestajId
+                })
+                .ToList();
+
+            return Ok(new { data = lista });
+        }
+
     }
 }

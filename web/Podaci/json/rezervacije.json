@@ -26,5 +26,26 @@
     "Status": 1,
     "AranzmanId": 1759232065,
     "SmestajnaJedinicaId": 6
+  },
+  {
+    "Id": 1758979259,
+    "TuristaId": 1759237555,
+    "Status": 0,
+    "AranzmanId": 1759238382,
+    "SmestajnaJedinicaId": 8
+  },
+  {
+    "Id": 1758979262,
+    "TuristaId": 1759237555,
+    "Status": 0,
+    "AranzmanId": 1759238382,
+    "SmestajnaJedinicaId": 8
+  },
+  {
+    "Id": 1759242174,
+    "TuristaId": 1759237555,
+    "Status": 1,
+    "AranzmanId": 1759232065,
+    "SmestajnaJedinicaId": 6
   }
 ]

@@ -50,7 +50,7 @@
   },
   {
     "Id": 8,
-    "DozvoljenBrojGostiju": 2,
+    "DozvoljenBrojGostiju": 10,
     "DozvoljenBoravakKucnimLjubimcima": false,
     "Cena": 1500.0,
     "IsDeleted": false

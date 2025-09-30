@@ -8,6 +8,31 @@
     <title>Turistički aranžmani | Početna</title>
     <script>
         $(document).ready(function () {
+            function preuzmiAranzmane() {
+                const status = $("#statusAranzmana").val(); // predstojeci | prethodni
+                console.log(status);
+                let url = "http://localhost:51858/api/aranzmani";
+
+                if (status === "predstojeci") {
+                    url += "/predstojeci";
+                } else
+                    url += "/prethodni";
+
+
+                $.ajax({
+                    url: url,
+                    method: "GET",
+                    success: function (response) {
+                        aranzmani = response.data || [];
+                        prikaziAranzmane(aranzmani);
+                    },
+                    error: function () { console.error("Greška pri preuzimanju aranžmana"); }
+                });
+            }
+            $("#statusAranzmana").on("change", function () {
+                preuzmiAranzmane();
+            });
+
             $("#navigacioni-meni").load("/Static/NavigacioniMeni.html");
 
             preuzmiAranzmane();
@@ -25,18 +50,6 @@
         });
 
         let aranzmani = [];
-
-        function preuzmiAranzmane() {
-            $.ajax({
-                url: "http://localhost:51858/api/aranzmani/predstojeci",
-                method: "GET",
-                success: function (response) {
-                    aranzmani = response.data || [];
-                    prikaziAranzmane(aranzmani);
-                },
-                error: function () { console.error("Greška pri preuzimanju aranžmana"); }
-            });
-        }
 
         function prikaziAranzmane(lista) {
             const container = $("#aranzmani-container");
@@ -131,6 +144,12 @@
 
                 prikaziAranzmane(filtrirani);
             }
+           
+
+        
+
+
+
 
             function sortirajAranzmane(nacin) {
                 const lista = [...aranzmani];
@@ -209,6 +228,16 @@
                 <label for="nazivAranzmana" class="block text-sm font-medium text-gray-700 mb-1">Naziv aranžmana:</label>
                 <input type="text" id="nazivAranzmana" placeholder="Naziv aranžmana" class="p-2 border border-blue-500 outline-none rounded-lg w-full" />
             </div>
+
+            <div>
+                <label for="statusAranzmana" class="block text-sm font-medium text-gray-700 mb-1">Status aranžmana:</label>
+                <select id="statusAranzmana" class="p-2 border border-blue-500 outline-none rounded-lg w-full">
+                    <option value="predstojeci">Predstojeći</option>
+                    <option value="prethodni">Prethodni</option>
+                </select>
+
+            </div>
+
         </div>
 
         <div class="flex gap-2 mb-10">
