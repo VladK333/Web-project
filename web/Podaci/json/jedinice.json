@@ -1,1 +1,58 @@
-[]
+[
+  {
+    "Id": 1,
+    "DozvoljenBrojGostiju": 3,
+    "DozvoljenBoravakKucnimLjubimcima": true,
+    "Cena": 4000.0,
+    "IsDeleted": false
+  },
+  {
+    "Id": 2,
+    "DozvoljenBrojGostiju": 2,
+    "DozvoljenBoravakKucnimLjubimcima": false,
+    "Cena": 3500.0,
+    "IsDeleted": false
+  },
+  {
+    "Id": 3,
+    "DozvoljenBrojGostiju": 2,
+    "DozvoljenBoravakKucnimLjubimcima": false,
+    "Cena": 3400.0,
+    "IsDeleted": false
+  },
+  {
+    "Id": 4,
+    "DozvoljenBrojGostiju": 5,
+    "DozvoljenBoravakKucnimLjubimcima": false,
+    "Cena": 2000.0,
+    "IsDeleted": true
+  },
+  {
+    "Id": 5,
+    "DozvoljenBrojGostiju": 4,
+    "DozvoljenBoravakKucnimLjubimcima": false,
+    "Cena": 2100.0,
+    "IsDeleted": true
+  },
+  {
+    "Id": 6,
+    "DozvoljenBrojGostiju": 5,
+    "DozvoljenBoravakKucnimLjubimcima": false,
+    "Cena": 2000.0,
+    "IsDeleted": false
+  },
+  {
+    "Id": 7,
+    "DozvoljenBrojGostiju": 4,
+    "DozvoljenBoravakKucnimLjubimcima": false,
+    "Cena": 2100.0,
+    "IsDeleted": false
+  },
+  {
+    "Id": 8,
+    "DozvoljenBrojGostiju": 2,
+    "DozvoljenBoravakKucnimLjubimcima": false,
+    "Cena": 1500.0,
+    "IsDeleted": false
+  }
+]

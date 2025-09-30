@@ -1,1 +1,75 @@
-[]
+[
+  {
+    "Id": 1,
+    "Tip": 0,
+    "Naziv": "Sunčani breg",
+    "BrojZvezdica": 5,
+    "ImaBazen": true,
+    "ImaSpaCentar": true,
+    "PrilagodjenoZaInvaliditet": false,
+    "ImaWifi": true,
+    "IsDeleted": false,
+    "SmestajneJedinice": [
+      1
+    ]
+  },
+  {
+    "Id": 2,
+    "Tip": 2,
+    "Naziv": "Gorski vrt",
+    "BrojZvezdica": 3,
+    "ImaBazen": true,
+    "ImaSpaCentar": false,
+    "PrilagodjenoZaInvaliditet": false,
+    "ImaWifi": false,
+    "IsDeleted": false,
+    "SmestajneJedinice": [
+      2,
+      3
+    ]
+  },
+  {
+    "Id": 3,
+    "Tip": 1,
+    "Naziv": "Fruškogorska terasa",
+    "BrojZvezdica": 2,
+    "ImaBazen": true,
+    "ImaSpaCentar": false,
+    "PrilagodjenoZaInvaliditet": false,
+    "ImaWifi": true,
+    "IsDeleted": true,
+    "SmestajneJedinice": [
+      4,
+      5
+    ]
+  },
+  {
+    "Id": 4,
+    "Tip": 1,
+    "Naziv": "Fruškogorska terasa",
+    "BrojZvezdica": 2,
+    "ImaBazen": false,
+    "ImaSpaCentar": false,
+    "PrilagodjenoZaInvaliditet": false,
+    "ImaWifi": true,
+    "IsDeleted": false,
+    "SmestajneJedinice": [
+      6,
+      7
+    ]
+  },
+  {
+    "Id": 5,
+    "Tip": 2,
+    "Naziv": "Villa Evandjelina",
+    "BrojZvezdica": 1,
+    "ImaBazen": true,
+    "ImaSpaCentar": false,
+    "PrilagodjenoZaInvaliditet": false,
+    "ImaWifi": false,
+    "IsDeleted": false,
+    "SmestajneJedinice": [
+      8
+    ]
+  }
+]

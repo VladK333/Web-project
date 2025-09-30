@@ -1,1 +1,30 @@
-[]
+[
+  {
+    "Id": 1759237580,
+    "TuristaId": 1759237555,
+    "Status": 1,
+    "AranzmanId": 1759232065,
+    "SmestajnaJedinicaId": 6
+  },
+  {
+    "Id": 1759237585,
+    "TuristaId": 1759237555,
+    "Status": 1,
+    "AranzmanId": 1759232065,
+    "SmestajnaJedinicaId": 6
+  },
+  {
+    "Id": 1759237592,
+    "TuristaId": 1759237555,
+    "Status": 1,
+    "AranzmanId": 1759232065,
+    "SmestajnaJedinicaId": 6
+  },
+  {
+    "Id": 1759237605,
+    "TuristaId": 1759237555,
+    "Status": 1,
+    "AranzmanId": 1759232065,
+    "SmestajnaJedinicaId": 6
+  }
+]

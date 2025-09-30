@@ -188,6 +188,7 @@
     <Content Include="Static\index.html" />
     <Content Include="Static\KomentariMenadzerTabela.html" />
     <Content Include="Static\KorisniciTabela.html" />
+    <Content Include="Static\Menadzment.html" />
     <Content Include="Static\NavigacioniMeni.html" />
     <Content Include="Static\Odjava.html" />
     <Content Include="Static\Prijava.html" />
@@ -227,9 +228,9 @@
         <WebProjectProperties>
           <UseIIS>True</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
-          <DevelopmentServerPort>50153</DevelopmentServerPort>
+          <DevelopmentServerPort>51858</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://localhost:50153/</IISUrl>
+          <IISUrl>http://localhost:51858/</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>

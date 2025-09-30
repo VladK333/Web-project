@@ -24,5 +24,31 @@
     "TipKorisnika": 2,
     "Rezervacije": [],
     "KreiraniAranzmani": []
+  },
+  {
+    "Id": 1758142449,
+    "KorisnickoIme": "putnik",
+    "Lozinka": "123456",
+    "Ime": "dsada",
+    "Prezime": "dasdsad",
+    "Email": "dd@ds.com",
+    "DatumRodjenja": "12/01/2001",
+    "Pol": "Muski",
+    "TipKorisnika": 1,
+    "Rezervacije": [],
+    "KreiraniAranzmani": []
+  },
+  {
+    "Id": 1759237555,
+    "KorisnickoIme": "turista",
+    "Lozinka": "123456",
+    "Ime": "Turista",
+    "Prezime": "Turista",
+    "Email": "turista@turista.com",
+    "DatumRodjenja": "12/09/2025",
+    "Pol": "Muski",
+    "TipKorisnika": 1,
+    "Rezervacije": [],
+    "KreiraniAranzmani": []
   }
 ]

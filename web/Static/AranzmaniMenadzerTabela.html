@@ -25,11 +25,11 @@
                class="border border-blue-500 rounded px-3 py-1 focus:outline-none focus:border-blue-600">
         <select id="pretragaTip" class="border border-blue-500 rounded px-3 py-1 focus:outline-none focus:border-blue-600">
             <option value="">Svi tipovi aranžmana</option>
-            <option value="0">Noćenje sa doručkom</option>
+            <option value="0">NocenjeSDoruckom</option>
             <option value="1">Polupansion</option>
-            <option value="2">Pun pansion</option>
-            <option value="3">All inclusive</option>
-            <option value="4">Najam apartmana</option>
+            <option value="2">PunPansion</option>
+            <option value="3">AllInclusive</option>
+            <option value="4">NajamApartmana</option>
         </select>
         <button id="dugmeFiltriraj" class="bg-blue-500 text-white px-4 py-1 rounded hover:bg-blue-600">Filtriraj</button>
         <input type="reset" id="dugmeResetuj" class="bg-red-500 text-white px-4 py-1 rounded hover:bg-red-600" value="Resetuj">
@@ -45,7 +45,6 @@
                 <th class="px-4 py-2">Datum početka</th>
                 <th class="px-4 py-2">Datum završetka</th>
                 <th class="px-4 py-2">Maks putnika</th>
-                <th class="px-4 py-2">Smestaj</th>
                 <th class="px-4 py-2">Akcije</th>
             </tr>
         </thead>
@@ -273,10 +272,9 @@
         <td>${a.Naziv || ''}</td>
         <td>${tip}</td>
         <td>${prevoz}</td>
-        <td>${a.DatumPocetka ? a.DatumPocetka.substring(0, 10) : ''}</td>
-        <td>${a.DatumZavrsetka ? a.DatumZavrsetka.substring(0, 10) : ''}</td>
+        <td>${new Date(a.DatumPocetka).toLocaleDateString("en-GB") ?? ''}</td>
+        <td>${new Date(a.DatumZavrsetka).toLocaleDateString("en-GB") ?? ''}</td>
         <td>${a.MaksPutnika || a.MaksimalanBrojPutnika || 0}</td>
-        <td>${a.SmestajNaziv || (a.SmestajId || '')}</td>
         <td>
             <button class="dugmeUredi bg-blue-500 text-white px-3 py-1 rounded mr-2" data-id="${a.Id}" ${!a.MozeUrediti ? 'disabled title="Samo kreator može menjati"' : ''}>Uredi</button>
             <button class="dugmeObrisi bg-red-500 text-white px-3 py-1 rounded mr-2" data-id="${a.Id}" ${!a.MozeUrediti ? 'disabled title="Samo kreator može brisati"' : ''}>Obriši</button>
@@ -307,8 +305,9 @@
                         const present = new Set();
                         if (resp && resp.data) {
                             resp.data.forEach(s => {
-                                select.append(`<option value="${s.Id}">${s.Naziv} (${s.Tip})</option>`);
+                                select.append(`<option value="${s.Id}">${s.Naziv} (${s.Tip ?? "Hotel"})</option>`);
                                 present.add(String(s.Id));
+                                console.log(resp.data);
                             });
                         }
                         // ako imamo odabrani smestaj i nije u listi, dohvatimo ga pojedinačno
@@ -320,6 +319,7 @@
                                             const s = r.data;
                                             const tip = (typeof s.Tip === 'string') ? s.Tip : (s.Tip === 0 ? 'Hotel' : s.Tip === 1 ? 'Motel' : 'Vila');
                                             select.append(`<option value="${s.Id}" selected>${s.Naziv} (${tip})</option>`);
+                                            
                                         }
                                     })
                                     .fail(() => {/* ignore */ });

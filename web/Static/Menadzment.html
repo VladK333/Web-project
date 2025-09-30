@@ -7,6 +7,67 @@
     <link href="../Content/tailwind.css" rel="stylesheet">
     <script src="../Scripts/jquery-3.7.1.min.js"></script>
     <title>Menadžment</title>
+    <script>
+        $(document).ready(function () {
+            $('#navigation-menu').load('NavigacioniMeni.html', function (response, status, xhr) { });
+
+            // JQuery kod za promenu tabova
+            $('button[role="tab"]').on('click', function () {
+                const tabId = $(this).data('hs-tab');
+                $('button[role="tab"]').removeClass('hs-tab-active:font-semibold hs-tab-active:border-blue-600 hs-tab-active:text-blue-600 active');
+                $('div[role="tabpanel"]').addClass('hidden');
+                $(this).addClass('hs-tab-active:font-semibold hs-tab-active:border-blue-600 hs-tab-active:text-blue-600 active');
+                $(tabId).removeClass('hidden');
+            });
+        });
+
+        // Izvršavanje koda nakon što se dokument učita
+        $(document).ready(function () {
+            $.ajax({
+                url: 'http://localhost:51858/api/identity/sesija',
+                type: 'GET',
+                success: function (response) {
+                    if (response && response.data) {
+
+                        var uloga = response.data.TipKorisnika;
+                        if (uloga === "ADMIN") {
+                            $('#tabs-with-icons-item-1').click();
+
+                            $('#admin-meni').show();
+                            $('#korisnik-meni').hide();
+                            $('#menadzer-meni').hide();
+
+                            $('#tabela-korisnika').load('KorisniciTabela.html', function (response, status, xhr) { });
+                        }
+                        else if (uloga === "MENADZER") {
+                            $('#tabs-with-icons-item-2').click();
+
+                            $('#admin-meni').hide();
+                            $('#korisnik-meni').hide();
+                            $('#menadzer-meni').show();
+
+                            $('#tabela-aranzmani-menadzer').load('AranzmaniMenadzerTabela.html', function (response, status, xhr) { });
+                            $('#tabela-smestaji').load('SmestajiTabela.html', function (response, status, xhr) { });
+                            $('#tabela-komentari-menadzer').load('KomentariMenadzerTabela.html', function (response, status, xhr) { });
+                        }
+                        else {
+                            $('#tabs-with-icons-item-6').click();
+
+                            $('#admin-meni').hide();
+                            $('#korisnik-meni').show();
+                            $('#menadzer-meni').hide();
+
+                            $('#tabela-rezervacije-turista').load('RezervacijeTuristaTabela.html', function (response, status, xhr) { });
+                            $('#tabela-komentari-turista').load('KomentariTuristaTabela.html', function (response, status, xhr) { });
+                        }
+                    }
+                    else {
+                        window.location.href = "index.html";
+                    }
+                }
+            });
+        });
+    </script>
 </head>
 
 <body>
@@ -65,7 +126,7 @@
                      aria-labelledby="tabs-with-icons-item-3">
                     <div id="tabela-smestaji" class="w-full -mb-8"></div>
                 </div>
-               
+
                 <div class="mt-16 mr-4" id="tabs-with-icons-8" class="hidden" role="tabpanel"
                      aria-labelledby="tabs-with-icons-item-8">
                     <div id="tabela-komentari-menadzer" class="w-full -mb-8"></div>
